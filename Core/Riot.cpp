@@ -63,41 +63,39 @@ void riot_SetInput(const byte* input) {
   (input[0x01])? memory_ram[SWCHA] = memory_ram[SWCHA] &~ 0x40: memory_ram[SWCHA] = memory_ram[SWCHA] | 0x40;
   (input[0x02])? memory_ram[SWCHA] = memory_ram[SWCHA] &~ 0x20: memory_ram[SWCHA] = memory_ram[SWCHA] | 0x20;
   (input[0x03])? memory_ram[SWCHA] = memory_ram[SWCHA] &~ 0x10: memory_ram[SWCHA] = memory_ram[SWCHA] | 0x10;
-  if(input[0x04]) {
-    memory_ram[INPT0] = memory_ram[INPT0] |  0x80; 
+  memory_ram[INPT4] = memory_ram[INPT4] | 0x80;			//gdement: start with INPT4 signal off. Either button can turn it on.
+  if(input[0x04]) {										//this is button 1, mapped as the Left button
+    memory_ram[INPT1] = memory_ram[INPT1] |  0x80;
+    memory_ram[INPT4] = memory_ram[INPT4] &~ 0x80;
+  }														
+  else {												
+    memory_ram[INPT1] = memory_ram[INPT1] &~ 0x80;
+  }
+  if(input[0x05]) {
+    memory_ram[INPT0] = memory_ram[INPT0] |  0x80;
     memory_ram[INPT4] = memory_ram[INPT4] &~ 0x80;
   }
   else {
     memory_ram[INPT0] = memory_ram[INPT0] &~ 0x80;
-    memory_ram[INPT4] = memory_ram[INPT4] |  0x80;
-  }
-  if(input[0x05]) {
-    memory_ram[INPT1] = memory_ram[INPT1] |  0x80;
-    memory_ram[INPT4] = memory_ram[INPT4] &~ 0x80;
-  }
-  else {
-    memory_ram[INPT1] = memory_ram[INPT1] &~ 0x80;
-    memory_ram[INPT4] = memory_ram[INPT4] |  0x80;
   }
   (input[0x06])? memory_ram[SWCHA] = memory_ram[SWCHA] &~ 0x08: memory_ram[SWCHA] = memory_ram[SWCHA] | 0x08;
   (input[0x07])? memory_ram[SWCHA] = memory_ram[SWCHA] &~ 0x04: memory_ram[SWCHA] = memory_ram[SWCHA] | 0x04;
   (input[0x08])? memory_ram[SWCHA] = memory_ram[SWCHA] &~ 0x02: memory_ram[SWCHA] = memory_ram[SWCHA] | 0x02;
   (input[0x09])? memory_ram[SWCHA] = memory_ram[SWCHA] &~ 0x01: memory_ram[SWCHA] = memory_ram[SWCHA] | 0x01;
+  memory_ram[INPT5] = memory_ram[INPT5] | 0x80;
   if(input[0x0a]) {
-    memory_ram[INPT2] = memory_ram[INPT2] |  0x80;  
-    memory_ram[INPT5] = memory_ram[INPT5] &~ 0x80;
-  }
-  else {
-    memory_ram[INPT2] = memory_ram[INPT2] &~ 0x80; 
-    memory_ram[INPT5] = memory_ram[INPT5] |  0x80;
-  }
-  if(input[0x0b]) {
     memory_ram[INPT3] = memory_ram[INPT3] |  0x80;
     memory_ram[INPT5] = memory_ram[INPT5] &~ 0x80;
   }
   else {
     memory_ram[INPT3] = memory_ram[INPT3] &~ 0x80;  
-    memory_ram[INPT5] = memory_ram[INPT5] |  0x80;
+  }
+  if(input[0x0b]) {
+    memory_ram[INPT2] = memory_ram[INPT2] |  0x80;  
+    memory_ram[INPT5] = memory_ram[INPT5] &~ 0x80;
+  }
+  else {
+    memory_ram[INPT2] = memory_ram[INPT2] &~ 0x80;		//end of gdement changes
   }
   (input[0x0c])? memory_ram[SWCHB] = memory_ram[SWCHB] &~ 0x01: memory_ram[SWCHB] = memory_ram[SWCHB] | 0x01;
   (input[0x0d])? memory_ram[SWCHB] = memory_ram[SWCHB] &~ 0x02: memory_ram[SWCHB] = memory_ram[SWCHB] | 0x02;

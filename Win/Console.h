@@ -24,7 +24,7 @@
 // ----------------------------------------------------------------------------
 #ifndef CONSOLE_H
 #define CONSOLE_H
-#define CONSOLE_VERSION "1.3a"
+#define CONSOLE_VERSION "1.3b"
 #define CONSOLE_TITLE "ProSystem Emulator"
 #define NULL 0
 

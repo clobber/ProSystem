@@ -28,7 +28,9 @@
 #define INPUT_KEY_SIZE 100
 #define INPUT_JOY_SIZE 20
 
-byte input_keys[17] = {DIK_RIGHT, DIK_LEFT, DIK_DOWN, DIK_UP, DIK_X, DIK_Z, DIK_L, DIK_J, DIK_K, DIK_I, DIK_M, DIK_N, DIK_F2, DIK_F3, DIK_F4, DIK_F5, DIK_F6};
+/*gdement: changed the default keys to correspond with remapping button1=Left button, button2=Right button
+byte input_keys[17] = {DIK_RIGHT, DIK_LEFT, DIK_DOWN, DIK_UP, DIK_X, DIK_Z, DIK_L, DIK_J, DIK_K, DIK_I, DIK_M, DIK_N, DIK_F2, DIK_F3, DIK_F4, DIK_F5, DIK_F6};*/
+byte input_keys[17] = {DIK_RIGHT, DIK_LEFT, DIK_DOWN, DIK_UP, DIK_Z, DIK_X, DIK_L, DIK_J, DIK_K, DIK_I, DIK_N, DIK_M, DIK_F2, DIK_F3, DIK_F4, DIK_F5, DIK_F6};
 byte input_values[17] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
 byte input_devices[17] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
 
