@@ -43,6 +43,17 @@ void main_ParseDefaultPath( ) {
     common_defaultPath = commandLine.substr(0, commandLine.find(' '));
     common_defaultPath = common_defaultPath.substr(0, common_defaultPath.rfind("\\") + 1);
   }
+
+//Leonis - screenshot directory
+  common_screenshotsPath = common_defaultPath + "snap";
+  std::string tmp2X;
+  tmp2X=common_screenshotsPath;
+  tmp2X=common_ReplaceString(tmp2X, "\\", "!");
+  tmp2X=common_ReplaceString(tmp2X, "!", "\\\\");
+  
+  CreateDirectory(tmp2X.c_str(), NULL);
+//Leonis
+
 }
 
 // ----------------------------------------------------------------------------

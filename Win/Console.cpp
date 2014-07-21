@@ -203,7 +203,6 @@ static void console_Open( ) {
   
   if(GetOpenFileName(&openDialog)) {
     console_Open(openDialog.lpstrFile);
-	console_SSS=openDialog.lpstrFile;
   }
   if(!menu_IsEnabled( ) && display_IsFullscreen( )) {
     console_SetCursorVisible(false);
@@ -383,15 +382,20 @@ static void console_OpenPalette( ) {
 // SaveScreenshot
 // ----------------------------------------------------------------------------
 static void console_SaveScreenshot( ) {
+
+if (common_Length(console_SSS)>0)
+  {
   console_SetCursorVisible(true);  
-  
-   
   char buf[270];
   char bbf[20];
 std::string console_S;  
-  int position = console_SSS.rfind('.');
+  int position = console_SSS.rfind(".");
   if(position != -1) {
     console_S=console_SSS.substr(0, position);
+  }
+  position = console_S.rfind("\\");
+  if(position != -1) {
+    console_S=console_S.substr(position, 255);
   }
   if (screenshot1)
   {
@@ -406,21 +410,22 @@ std::string console_S;
   {
   console_S=common_Replace(console_S, ' ','_');
   }
+      
+	  console_S=common_screenshotsPath+console_S; 
 
-  
   strcpy(buf,console_S.c_str());
   sprintf(bbf, "%.2d", nf);
   nf++;
   strcat(buf,"_");
   strcat(buf,bbf);
   strcat(buf,".bmp");
-    
 
     if(!display_TakeScreenshot(buf)) {
       logger_LogError(IDS_CONSOLE1,"");
     }
   if(!menu_IsEnabled( ) && display_IsFullscreen( )) {
     console_SetCursorVisible(false);
+  }
   }
 }
 
@@ -854,6 +859,7 @@ static LRESULT CALLBACK console_Procedure(HWND hWnd, UINT message, WPARAM wParam
 // ----------------------------------------------------------------------------
 bool console_Initialize(HINSTANCE hInstance, std::string commandLine) {
   std::string romfile;
+
   WNDCLASSEX wClass = {0};
   wClass.cbSize = sizeof(WNDCLASSEX);
   wClass.style = 0;
@@ -981,6 +987,7 @@ void console_Run( ) {
 // ----------------------------------------------------------------------------
 void console_Open(std::string filename) {
   if(cartridge_Load(filename)) {
+ 	console_SSS=filename;
     sound_Stop( );
     display_Clear( );
     database_Load(cartridge_digest);

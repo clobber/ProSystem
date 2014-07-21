@@ -187,7 +187,7 @@ bool cartridge_Load(std::string filename) {
   
   cartridge_Release( );
   logger_LogInfo(IDS_CARTRIDGE8,filename);
-  
+    
   byte* data = NULL;
   uint size = archive_GetUncompressedFileSize(filename);
   if(size == 0) {
@@ -235,6 +235,7 @@ bool cartridge_Load(std::string filename) {
   }
   
   cartridge_filename = filename;
+  logger_LogInfo("MD5 hash:", cartridge_digest);
   return true;
 }
 

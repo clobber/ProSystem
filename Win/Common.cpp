@@ -25,6 +25,7 @@
 #include "Common.h"
 
 std::string common_defaultPath;
+std::string common_screenshotsPath;
 
 // ----------------------------------------------------------------------------
 // Format
@@ -160,6 +161,18 @@ std::string common_Remove(std::string target, char value) {
 }
 
 // ----------------------------------------------------------------------------
+// Length
+// ----------------------------------------------------------------------------
+int common_Length(std::string target) {
+  int length = 0;
+  int index;
+  for(index = 0; index < target.size( ); index++) {
+     length++;
+      }
+  return length;
+}
+
+// ----------------------------------------------------------------------------
 // Replace (string, from, to)
 // ----------------------------------------------------------------------------
 std::string common_Replace(std::string target, char value1, char value2) {
@@ -185,6 +198,20 @@ std::string common_Replace(std::string target, char value1, char value2) {
   delete[ ] buffer;
   return source;
 }
+
+
+// ----------------------------------------------------------------------------
+// Replace (string, from, to)
+// ----------------------------------------------------------------------------
+
+std::string common_ReplaceString(std::string target, std::string value1, std::string value2)
+ {
+  while(target.find(value1,0) != -1){
+   target.replace(target.find(value1,0), value1.length(), value2);
+  }
+  return target;
+}
+
 
 // ----------------------------------------------------------------------------
 // GetErrorMessage
