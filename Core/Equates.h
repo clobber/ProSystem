@@ -75,6 +75,7 @@
 #define SWCHB       642
 #define CTLSWB      643
 #define INTIM       644
+#define INTFLG      645
 #define TIM1T       660
 #define TIM8T       661
 #define TIM64T      662

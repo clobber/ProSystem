@@ -57,6 +57,8 @@ extern bool display_Clear( );
 extern bool display_IsFullscreen( );
 extern void display_Release( );
 extern bool display_stretched;
+extern bool display_fullscreen;
+extern bool display_menuenabled;
 extern byte display_zoom;
 extern std::vector<Mode> display_modes;
 extern Mode display_mode;

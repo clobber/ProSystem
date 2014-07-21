@@ -32,9 +32,12 @@ typedef unsigned char byte;
 typedef unsigned short word;
 typedef unsigned int uint;
 
+extern void riot_Reset(void);
 extern void riot_SetInput(const byte* input);
 extern void riot_SetTimer(word timer, byte intervals);
 extern void riot_UpdateTimer(byte cycles);
 extern bool riot_timing;
+extern word riot_timer;
+extern byte riot_intervals;
 
 #endif

@@ -131,9 +131,10 @@ BEGIN
             MENUITEM "Controller &1...",            IDM_INPUT_CONTROLLER1
             MENUITEM "Controller &2...",            IDM_INPUT_CONTROLLER2
             MENUITEM "&Console...",                 IDM_INPUT_CONSOLE
+            MENUITEM "&User...",                    IDM_INPUT_USER
         END
         MENUITEM SEPARATOR
-        MENUITEM "&Menu\tEsc",                  IDM_OPTIONS_MENU
+        MENUITEM "&Menu",                       IDM_OPTIONS_MENU
     END
     POPUP "&Help"
     BEGIN
@@ -185,7 +186,6 @@ BEGIN
     "P",            IDM_OPTIONS_PAUSE,      VIRTKEY, CONTROL, NOINVERT
     "R",            IDM_OPTIONS_RESET,      VIRTKEY, CONTROL, NOINVERT
     "S",            IDM_FILE_SAVE,          VIRTKEY, CONTROL, NOINVERT
-    VK_ESCAPE,      IDM_OPTIONS_MENU,       VIRTKEY, NOINVERT
     VK_F1,          IDM_HELP_CONTENTS,      VIRTKEY, NOINVERT
 END
 
@@ -294,6 +294,32 @@ BEGIN
     LTEXT           "Part / Key",-1,165,13,36,10,SS_CENTERIMAGE
 END
 
+IDD_DIALOG_USER DIALOG DISCARDABLE  0, 0, 311, 94
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Dialog"
+FONT 8, "MS Sans Serif"
+BEGIN
+    DEFPUSHBUTTON   "OK",IDC_BUTTON_USER_OK,105,73,50,14
+    PUSHBUTTON      "Cancel",IDC_BUTTON_USER_CANCEL,160,73,50,14
+    COMBOBOX        IDC_COMBO_MOD_MENU,171,27,57,151,CBS_DROPDOWNLIST | 
+                    WS_VSCROLL | WS_TABSTOP
+    LTEXT           "Menu",IDC_STATIC,13,29,36,10,SS_CENTERIMAGE
+    LTEXT           "Exit",IDC_STATIC,13,44,36,10,SS_CENTERIMAGE
+    COMBOBOX        IDC_COMBO_MOD_EXIT,171,42,57,151,CBS_DROPDOWNLIST | 
+                    WS_VSCROLL | WS_TABSTOP
+    COMBOBOX        IDC_COMBO_DEVICE_MENU,51,27,115,151,CBS_DROPDOWNLIST | 
+                    WS_VSCROLL | WS_TABSTOP
+    COMBOBOX        IDC_COMBO_DEVICE_EXIT,51,42,115,151,CBS_DROPDOWNLIST | 
+                    WS_VSCROLL | WS_TABSTOP
+    LTEXT           "Modifier",IDC_STATIC,171,16,36,10,SS_CENTERIMAGE
+    LTEXT           "Device",IDC_STATIC,51,16,36,10,SS_CENTERIMAGE
+    COMBOBOX        IDC_COMBO_PART_MENU,237,27,57,151,CBS_DROPDOWNLIST | 
+                    WS_VSCROLL | WS_TABSTOP
+    COMBOBOX        IDC_COMBO_PART_EXIT,237,42,57,151,CBS_DROPDOWNLIST | 
+                    WS_VSCROLL | WS_TABSTOP
+    LTEXT           "Part / Key",IDC_STATIC,237,16,36,10,SS_CENTERIMAGE
+END
+
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -325,6 +351,14 @@ BEGIN
         RIGHTMARGIN, 233
         TOPMARGIN, 7
         BOTTOMMARGIN, 128
+    END
+
+    IDD_DIALOG_USER, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 304
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 87
     END
 END
 #endif    // APSTUDIO_INVOKED

@@ -40,6 +40,29 @@ void memory_Reset( ) {
     memory_rom[index] = 0;
   }
 }
+// ----------------------------------------------------------------------------
+// Read
+// ----------------------------------------------------------------------------
+byte memory_Read(word address) {
+  byte tmp_byte;
+
+  switch ( address ) {
+  case INTIM:
+  case INTIM | 0x2:
+	memory_ram[INTFLG] &= 0x7f;
+    return memory_ram[INTIM];
+	break;
+  case INTFLG:
+  case INTFLG | 0x2:
+	 tmp_byte = memory_ram[INTFLG];
+	 memory_ram[INTFLG] &= 0x7f;
+	 return tmp_byte; 
+     break;
+  default:
+    return memory_ram[address];
+    break;
+  }
+}
 
 // ----------------------------------------------------------------------------
 // Write
@@ -95,15 +118,19 @@ void memory_Write(word address, byte data) {
       case CTLSWB:
         break;
       case TIM1T:
+      case TIM1T | 0x8:
         riot_SetTimer(TIM1T, data);
         break;
       case TIM8T:
+      case TIM8T | 0x8:
         riot_SetTimer(TIM8T, data);
         break;
       case TIM64T:
+      case TIM64T | 0x8:
         riot_SetTimer(TIM64T, data);
         break;
       case T1024T:
+      case T1024T | 0x8:
         riot_SetTimer(T1024T, data);
         break;
       default:

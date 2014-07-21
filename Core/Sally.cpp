@@ -89,7 +89,7 @@ static void sally_Push(byte data) {
 // ----------------------------------------------------------------------------
 static byte sally_Pop( ) {
   sally_s++;
-  return memory_ram[sally_s + 256];
+  return memory_Read(sally_s + 256);
 }
 
 // ----------------------------------------------------------------------------
@@ -143,16 +143,16 @@ static void sally_Delay(byte delta) {
 // Absolute
 // ----------------------------------------------------------------------------
 static void sally_Absolute( ) {
-  sally_address.b.l = memory_ram[sally_pc.w++];
-  sally_address.b.h = memory_ram[sally_pc.w++];
+  sally_address.b.l = memory_Read(sally_pc.w++);
+  sally_address.b.h = memory_Read(sally_pc.w++);
 }
 
 // ----------------------------------------------------------------------------
 // AbsoluteX
 // ----------------------------------------------------------------------------
 static void sally_AbsoluteX( ) {
-  sally_address.b.l = memory_ram[sally_pc.w++];
-  sally_address.b.h = memory_ram[sally_pc.w++];
+  sally_address.b.l = memory_Read(sally_pc.w++);
+  sally_address.b.h = memory_Read(sally_pc.w++);
   sally_address.w += sally_x;
 }
 
@@ -160,8 +160,8 @@ static void sally_AbsoluteX( ) {
 // AbsoluteY
 // ----------------------------------------------------------------------------
 static void sally_AbsoluteY( ) {
-  sally_address.b.l = memory_ram[sally_pc.w++];
-  sally_address.b.h = memory_ram[sally_pc.w++];
+  sally_address.b.l = memory_Read(sally_pc.w++);
+  sally_address.b.h = memory_Read(sally_pc.w++);
   sally_address.w += sally_y;
 }
 
@@ -177,28 +177,28 @@ static void sally_Immediate( ) {
 // ----------------------------------------------------------------------------
 static void sally_Indirect( ) {
   pair base;
-  base.b.l = memory_ram[sally_pc.w++];
-  base.b.h = memory_ram[sally_pc.w++];
-  sally_address.b.l = memory_ram[base.w];
-  sally_address.b.h = memory_ram[base.w + 1];
+  base.b.l = memory_Read(sally_pc.w++);
+  base.b.h = memory_Read(sally_pc.w++);
+  sally_address.b.l = memory_Read(base.w);
+  sally_address.b.h = memory_Read(base.w + 1);
 }
 
 // ----------------------------------------------------------------------------
 // IndirectX
 // ----------------------------------------------------------------------------
 static void sally_IndirectX( ) {
-  sally_address.b.l = memory_ram[sally_pc.w++] + sally_x;
-  sally_address.b.h = memory_ram[sally_address.b.l + 1];
-  sally_address.b.l = memory_ram[sally_address.b.l];
+  sally_address.b.l = memory_Read(sally_pc.w++) + sally_x;
+  sally_address.b.h = memory_Read(sally_address.b.l + 1);
+  sally_address.b.l = memory_Read(sally_address.b.l);
 }
 
 // ----------------------------------------------------------------------------
 // IndirectY
 // ----------------------------------------------------------------------------
 static void sally_IndirectY( ) {
-  sally_address.b.l = memory_ram[sally_pc.w++];
-  sally_address.b.h = memory_ram[sally_address.b.l + 1];
-  sally_address.b.l = memory_ram[sally_address.b.l];
+  sally_address.b.l = memory_Read(sally_pc.w++);
+  sally_address.b.h = memory_Read(sally_address.b.l + 1);
+  sally_address.b.l = memory_Read(sally_address.b.l);
   sally_address.w += sally_y;
 }
 
@@ -206,21 +206,21 @@ static void sally_IndirectY( ) {
 // Relative
 // ----------------------------------------------------------------------------
 static void sally_Relative( ) {
-  sally_address.w = memory_ram[sally_pc.w++];
+  sally_address.w = memory_Read(sally_pc.w++);
 }
 
 // ----------------------------------------------------------------------------
 // Zero Page
 // ----------------------------------------------------------------------------
 static void sally_ZeroPage( ) {
-  sally_address.w = memory_ram[sally_pc.w++];
+  sally_address.w = memory_Read(sally_pc.w++);
 }
 
 // ----------------------------------------------------------------------------
 // ZeroPageX
 // ----------------------------------------------------------------------------
 static void sally_ZeroPageX( ) {
-  sally_address.w = memory_ram[sally_pc.w++];
+  sally_address.w = memory_Read(sally_pc.w++);
   sally_address.b.l += sally_x;
 }
 
@@ -228,7 +228,7 @@ static void sally_ZeroPageX( ) {
 // ZeroPageY
 // ----------------------------------------------------------------------------
 static void sally_ZeroPageY( ) {
-  sally_address.w = memory_ram[sally_pc.w++];
+  sally_address.w = memory_Read(sally_pc.w++);
   sally_address.b.l += sally_y;
 }
 
@@ -236,7 +236,7 @@ static void sally_ZeroPageY( ) {
 // ADC
 // ----------------------------------------------------------------------------
 static void sally_ADC( ) {
-  byte data = memory_ram[sally_address.w];
+  byte data = memory_Read(sally_address.w);
     
   if(sally_p & SALLY_FLAG.D) {
     word al = (sally_a & 15) + (data & 15) + (sally_p & SALLY_FLAG.C);
@@ -308,7 +308,7 @@ static void sally_ADC( ) {
 // AND
 // ----------------------------------------------------------------------------
 static void sally_AND( ) {
-  sally_a &= memory_ram[sally_address.w];
+  sally_a &= memory_Read(sally_address.w);
   sally_Flags(sally_a);
 }
 
@@ -331,7 +331,7 @@ static void sally_ASLA( ) {
 // ASL
 // ----------------------------------------------------------------------------
 static void sally_ASL( ) {
-  byte data = memory_ram[sally_address.w];
+  byte data = memory_Read(sally_address.w);
     
   if(data & 128) {
     sally_p |= SALLY_FLAG.C;
@@ -370,7 +370,7 @@ static void sally_BEQ( ) {
 // BIT
 // ----------------------------------------------------------------------------
 static void sally_BIT( ) {
-  byte data = memory_ram[sally_address.w];
+  byte data = memory_Read(sally_address.w);
     
   if(!(data & sally_a)) {
     sally_p |= SALLY_FLAG.Z;
@@ -468,7 +468,7 @@ static void sally_CLV( ) {
 // CMP
 // ----------------------------------------------------------------------------
 static void sally_CMP( ) {
-  byte data = memory_ram[sally_address.w];
+  byte data = memory_Read(sally_address.w);
     
   if(sally_a >= data) {
     sally_p |= SALLY_FLAG.C;
@@ -484,7 +484,7 @@ static void sally_CMP( ) {
 // CPX
 // ----------------------------------------------------------------------------
 static void sally_CPX( ) {
-  byte data = memory_ram[sally_address.w];
+  byte data = memory_Read(sally_address.w);
     
   if(sally_x >= data) {
     sally_p |= SALLY_FLAG.C;  
@@ -500,7 +500,7 @@ static void sally_CPX( ) {
 // CPY
 // ----------------------------------------------------------------------------
 static void sally_CPY( ) {
-  byte data = memory_ram[sally_address.w];
+  byte data = memory_Read(sally_address.w);
 
   if(sally_y >= data) {
     sally_p |= SALLY_FLAG.C;
@@ -516,7 +516,7 @@ static void sally_CPY( ) {
 // DEC
 // ----------------------------------------------------------------------------
 static void sally_DEC( ) {
-  byte data = memory_ram[sally_address.w];
+  byte data = memory_Read(sally_address.w);
   memory_Write(sally_address.w, --data);
   sally_Flags(data);
 }
@@ -539,7 +539,7 @@ static void sally_DEY( ) {
 // EOR
 // ----------------------------------------------------------------------------
 static void sally_EOR( ) {
-  sally_a ^= memory_ram[sally_address.w];
+  sally_a ^= memory_Read(sally_address.w);
   sally_Flags(sally_a);
 }
 
@@ -547,7 +547,7 @@ static void sally_EOR( ) {
 // INC
 // ----------------------------------------------------------------------------
 static void sally_INC( ) {
-  byte data = memory_ram[sally_address.w];
+  byte data = memory_Read(sally_address.w);
   memory_Write(sally_address.w, ++data);
   sally_Flags(data);
 }
@@ -588,7 +588,7 @@ static void sally_JSR( ) {
 // LDA
 // ----------------------------------------------------------------------------
 static void sally_LDA( ) {
-  sally_a = memory_ram[sally_address.w];
+  sally_a = memory_Read(sally_address.w);
   sally_Flags(sally_a);
 }
 
@@ -596,7 +596,7 @@ static void sally_LDA( ) {
 // LDX
 // ----------------------------------------------------------------------------
 static void sally_LDX( ) {
-  sally_x = memory_ram[sally_address.w];
+  sally_x = memory_Read(sally_address.w);
   sally_Flags(sally_x);
 }
 
@@ -604,7 +604,7 @@ static void sally_LDX( ) {
 // LDY
 // ----------------------------------------------------------------------------
 static void sally_LDY( ) {
-  sally_y = memory_ram[sally_address.w];
+  sally_y = memory_Read(sally_address.w);
   sally_Flags(sally_y);
 }
 
@@ -623,7 +623,7 @@ static void sally_LSRA( ) {
 // LSR
 // ----------------------------------------------------------------------------
 static void sally_LSR( ) {
-  byte data = memory_ram[sally_address.w];
+  byte data = memory_Read(sally_address.w);
     
   sally_p &= ~SALLY_FLAG.C;
   sally_p |= data & 1;
@@ -643,7 +643,7 @@ static void sally_NOP( ) {
 // ORA
 // ----------------------------------------------------------------------------
 static void sally_ORA( ) {
-  sally_a |= memory_ram[sally_address.w];
+  sally_a |= memory_Read(sally_address.w);
   sally_Flags(sally_a);
 }
 
@@ -698,7 +698,7 @@ static void sally_ROLA( ) {
 // ROL
 // ----------------------------------------------------------------------------
 static void sally_ROL( ) {
-  byte data = memory_ram[sally_address.w];
+  byte data = memory_Read(sally_address.w);
   byte temp = sally_p;
     
   if(data & 128) {
@@ -735,7 +735,7 @@ static void sally_RORA( ) {
 // ROR
 // ----------------------------------------------------------------------------
 static void sally_ROR( ) {
-  byte data = memory_ram[sally_address.w];
+  byte data = memory_Read(sally_address.w);
   byte temp = sally_p;
     
   sally_p &= ~SALLY_FLAG.C;
@@ -772,7 +772,7 @@ static void sally_RTS( ) {
 // SBC
 // ----------------------------------------------------------------------------
 static void sally_SBC( ) {
-  byte data = memory_ram[sally_address.w];
+  byte data = memory_Read(sally_address.w);
 
   if(sally_p & SALLY_FLAG.D) {
     word al = (sally_a & 15) - (data & 15) - !(sally_p & SALLY_FLAG.C);
@@ -935,7 +935,7 @@ void sally_Reset( ) {
 // ExecuteInstruction
 // ----------------------------------------------------------------------------
 uint sally_ExecuteInstruction( ) {
-  sally_opcode = memory_ram[sally_pc.w++];
+  sally_opcode = memory_Read(sally_pc.w++);
   sally_cycles = SALLY_CYCLES[sally_opcode];
   
   switch(sally_opcode) {

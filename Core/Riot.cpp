@@ -25,10 +25,15 @@
 #include "Riot.h"
 
 bool riot_timing = false;
+word riot_timer = TIM64T;
+byte riot_intervals;
 
 static bool riot_elapsed;
 static int riot_currentTime;
 static word riot_clocks;
+
+void riot_Reset(void) {
+}
 
 // ----------------------------------------------------------------------------
 // SetInput
@@ -105,6 +110,8 @@ void riot_SetInput(const byte* input) {
 // SetTimer
 // ----------------------------------------------------------------------------
 void riot_SetTimer(word timer, byte intervals) {
+  riot_timer = timer;
+  riot_intervals = intervals;
   switch(timer) {
     case T1024T:
       riot_clocks = 1024;
@@ -150,6 +157,7 @@ void riot_UpdateTimer(byte cycles) {
     else {
       riot_currentTime = riot_clocks;
       memory_Write(INTIM, 0);
+	  memory_ram[INTFLG] |= 0x80;
       riot_elapsed = true;
     }
   }

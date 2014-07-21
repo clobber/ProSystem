@@ -38,6 +38,7 @@ typedef unsigned short word;
 typedef unsigned int uint;
 
 extern void memory_Reset( );
+extern byte memory_Read(word address);
 extern void memory_Write(word address, byte data);
 extern void memory_WriteROM(word address, word size, const byte* data);
 extern void memory_ClearROM(word address, word size);

@@ -29,6 +29,10 @@
 		<param name="Local" value="File.htm">
 		</OBJECT>
 	<LI> <OBJECT type="text/sitemap">
+		<param name="Name" value="Command Line">
+		<param name="Local" value="CommandLine.htm">
+		</OBJECT>
+	<LI> <OBJECT type="text/sitemap">
 		<param name="Name" value="Options">
 		<param name="Local" value="Options.htm">
 		</OBJECT>

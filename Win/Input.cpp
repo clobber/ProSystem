@@ -33,6 +33,11 @@ byte input_keys[17] = {DIK_RIGHT, DIK_LEFT, DIK_DOWN, DIK_UP, DIK_X, DIK_Z, DIK_
 byte input_values[17] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
 byte input_devices[17] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
 
+byte user_keys[2] = {DIK_ESCAPE, DIK_F4};
+byte user_values[2] = {0,0};
+byte user_devices[2] = {0,0};
+byte user_modifiers[2] = {0,DIK_LALT};
+
 static LPDIRECTINPUT input_dinput = NULL;
 static LPDIRECTINPUTDEVICE2 input_joystick[128] = {NULL,NULL};
 static LPDIRECTINPUTDEVICE input_keyboard = NULL;
@@ -45,6 +50,7 @@ static int current_device;
 
 BOOL CALLBACK InitJoysticksCallback(const DIDEVICEINSTANCE*     
                                        pdidInstance, VOID* pContext);
+void input_GetJoystickPartState ( byte part, byte *state, DIJOYSTATE *js );
 
 // ----------------------------------------------------------------------------
 // InitializeKeys
@@ -69,6 +75,40 @@ static void input_InitializeKeys(HWND hCombo, int value) {
 // ----------------------------------------------------------------------------
 static void input_SelectKey(HWND hCombo, int value) {
   for(int index = 0; index < INPUT_KEY_SIZE; index++) {
+    if(SendMessage(hCombo, CB_GETITEMDATA, index, 0) == value) {
+      SendMessage(hCombo, CB_SETCURSEL, index, 0);
+      return;
+    }
+  }
+}
+
+// ----------------------------------------------------------------------------
+// InitializeModifiers
+// ----------------------------------------------------------------------------
+static void input_InitializeModifiers(HWND hCombo, int value) {
+
+  if ( value ) {
+	SendMessage(hCombo, CB_SHOWDROPDOWN, false, 0);
+	SendMessage(hCombo, CB_RESETCONTENT, 0, 0);
+  }
+  else {
+    SendMessage(hCombo, CB_SHOWDROPDOWN, true, 0);
+	SendMessage(hCombo, CB_INSERTSTRING, 0, (LPARAM)"None");
+	SendMessage(hCombo, CB_SETITEMDATA, 0, 0);
+	SendMessage(hCombo, CB_INSERTSTRING, 1, (LPARAM)"Shift");
+	SendMessage(hCombo, CB_SETITEMDATA, 1, DIK_LSHIFT);
+	SendMessage(hCombo, CB_INSERTSTRING, 2, (LPARAM)"Alt");
+	SendMessage(hCombo, CB_SETITEMDATA, 2, DIK_LALT);
+	SendMessage(hCombo, CB_INSERTSTRING, 3, (LPARAM)"Ctrl");
+	SendMessage(hCombo, CB_SETITEMDATA, 3, DIK_LCONTROL);
+  }
+}
+
+// ----------------------------------------------------------------------------
+// SelectModifier
+// ----------------------------------------------------------------------------
+static void input_SelectModifier(HWND hCombo, int value) {
+  for(int index = 0; index < 4; index++) {
     if(SendMessage(hCombo, CB_GETITEMDATA, index, 0) == value) {
       SendMessage(hCombo, CB_SETCURSEL, index, 0);
       return;
@@ -152,6 +192,20 @@ BOOL CALLBACK InitJoysticksListConsole(const DIDEVICEINSTANCE*
 	input_AddDevice (GetDlgItem((HWND)pContext, IDC_COMBO_DEVICE_LEFTD), 
                        (char *)pdidInstance->tszInstanceName, current_device );
 	input_AddDevice (GetDlgItem((HWND)pContext, IDC_COMBO_DEVICE_RIGHTD), 
+                       (char *)pdidInstance->tszInstanceName, current_device );
+
+    return DIENUM_CONTINUE;
+}
+
+// ----------------------------------------------------------------------------
+// InitJoysticksListUser
+// ----------------------------------------------------------------------------
+BOOL CALLBACK InitJoysticksListUser(const DIDEVICEINSTANCE*     
+                                       pdidInstance, VOID* pContext) {
+	// Add to Our Device List
+	input_AddDevice (GetDlgItem((HWND)pContext, IDC_COMBO_DEVICE_MENU), 
+                       (char *)pdidInstance->tszInstanceName, ++current_device );
+	input_AddDevice (GetDlgItem((HWND)pContext, IDC_COMBO_DEVICE_EXIT), 
                        (char *)pdidInstance->tszInstanceName, current_device );
 
     return DIENUM_CONTINUE;
@@ -287,6 +341,48 @@ static void input_SetConsoleValues(HWND hDialog) {
 }
 
 // ----------------------------------------------------------------------------
+// SetUserValues
+// ----------------------------------------------------------------------------
+static void input_SetUserValues(HWND hDialog) {
+
+  int i,value,index;
+  int id[] = {IDC_COMBO_PART_MENU,IDC_COMBO_PART_EXIT};
+  int id_device[] = {IDC_COMBO_DEVICE_MENU,IDC_COMBO_DEVICE_EXIT};
+  int id_modifier[] = {IDC_COMBO_MOD_MENU,IDC_COMBO_MOD_EXIT};
+
+  HWND hCombo;
+
+  for ( i = 0; i < 2; ++i ) {
+    user_values[i] = 0;
+  }
+
+  for ( i = 0; i < 2; ++i ) {
+    hCombo = GetDlgItem(hDialog, id[i]);
+    index = SendMessage(hCombo, CB_GETCURSEL, 0, 0);
+    if(index != CB_ERR) {
+      value = SendMessage(hCombo, CB_GETITEMDATA, index, 0);
+      //if(!input_HasKeyValue(value)) {
+        user_keys[i] = value;
+      //}
+    }  
+
+    hCombo = GetDlgItem(hDialog, id_device[i]);
+    index = SendMessage(hCombo, CB_GETCURSEL, 0, 0);
+    if(index != CB_ERR) {
+      value = SendMessage(hCombo, CB_GETITEMDATA, index, 0);
+      user_devices[i] = value;
+	}
+
+    hCombo = GetDlgItem(hDialog, id_modifier[i]);
+    index = SendMessage(hCombo, CB_GETCURSEL, 0, 0);
+    if(index != CB_ERR) {
+      value = SendMessage(hCombo, CB_GETITEMDATA, index, 0);
+      user_modifiers[i] = value;
+	}
+  }
+}
+
+// ----------------------------------------------------------------------------
 // InitializeConsoleDialog
 // ----------------------------------------------------------------------------
 static void input_InitializeConsoleDialog(HWND hDialog) {
@@ -331,6 +427,57 @@ static void input_InitializeConsoleDialog(HWND hDialog) {
   	input_InitializeKeys(hCombo = GetDlgItem(hDialog, id[i]), input_devices[i+12]);
   	input_SelectKey(hCombo, input_keys[i+12]);
   }
+}
+
+// ----------------------------------------------------------------------------
+// InitializeUserDialog
+// ----------------------------------------------------------------------------
+static void input_InitializeUserDialog(HWND hDialog) {
+
+  HWND hCombo;
+  int i;
+  int value,index;
+  int id[] = {IDC_COMBO_PART_MENU,IDC_COMBO_PART_EXIT};
+  int id_device[] = {IDC_COMBO_DEVICE_MENU,IDC_COMBO_DEVICE_EXIT};
+  int id_modifier[] = {IDC_COMBO_MOD_MENU,IDC_COMBO_MOD_EXIT};
+
+  // Add Keyboard to Device List
+  for ( i = 0; i < 2; ++i )
+    input_AddDevice(GetDlgItem(hDialog, id_device[i]), "Keyboard", 0);
+
+  // First find joysticks, if any, callback adds to list
+  current_device = 0;
+  if ( input_dinput != NULL )
+	  input_dinput->EnumDevices(DIDEVTYPE_JOYSTICK, InitJoysticksListUser,
+	                            hDialog, DIEDFL_ATTACHEDONLY);
+
+  // Select Keyboard or Joystick Device
+  for ( i = 0; i < 2; ++i ) {
+  	index = SendMessage(GetDlgItem(hDialog, id_device[i]), CB_SETCURSEL, (LPARAM)user_devices[i], 0);
+  	if(index != CB_ERR) {
+    	value = SendMessage(GetDlgItem(hDialog, id_device[i]), CB_GETITEMDATA, index, 0);
+        user_devices[i] = value;
+	}
+	else {
+		index = SendMessage(GetDlgItem(hDialog, id_device[i]), CB_GETCOUNT, 0, 0 );
+		SendMessage(GetDlgItem(hDialog, id_device[i]), CB_SETCURSEL, index-1, 0 );
+    	value = SendMessage(GetDlgItem(hDialog, id_device[i]), CB_GETITEMDATA, index-1, 0);
+        user_devices[i] = value;
+	}
+  }
+  
+  // Initialize parts list based on selected device
+  for ( i = 0; i < 2; ++i ) {
+  	input_InitializeKeys(hCombo = GetDlgItem(hDialog, id[i]), user_devices[i]);
+  	input_SelectKey(hCombo, user_keys[i]);
+  }
+
+  // Initialize modifier keys
+  for ( i = 0; i < 2; ++i ) {
+  	input_InitializeModifiers(hCombo = GetDlgItem(hDialog, id_modifier[i]), user_devices[i]);
+  	input_SelectModifier(hCombo, user_modifiers[i]);
+  }
+
 }
 
 // ----------------------------------------------------------------------------
@@ -517,6 +664,64 @@ static BOOL CALLBACK input_ConsoleProcedure(HWND hWnd, UINT message, WPARAM wPar
 }
 
 // ----------------------------------------------------------------------------
+// UserProcedure
+// ----------------------------------------------------------------------------
+static BOOL CALLBACK input_UserProcedure(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) {
+
+  int value;
+  int index, id_index;
+  int id[] = {IDC_COMBO_PART_MENU,IDC_COMBO_PART_EXIT};
+  int id_modifier[] = {IDC_COMBO_MOD_MENU,IDC_COMBO_MOD_EXIT};
+
+  switch(message) {
+    case WM_INITDIALOG:
+      input_InitializeUserDialog(hWnd);      
+      break;
+    case WM_COMMAND:
+      if(LOWORD(wParam) == IDCANCEL || LOWORD(wParam) == IDC_BUTTON_USER_CANCEL) {
+		input_ReleaseJoysticks();
+		current_device = 0;
+        input_dinput->EnumDevices(DIDEVTYPE_JOYSTICK, InitJoysticksCallback,
+                                  NULL, DIEDFL_ATTACHEDONLY);
+        EndDialog(hWnd, 0);
+        return 1;
+      }
+      else if(LOWORD(wParam) == IDC_BUTTON_USER_OK) {
+        input_SetUserValues(hWnd);
+		input_ReleaseJoysticks();
+		current_device = 0;
+        input_dinput->EnumDevices(DIDEVTYPE_JOYSTICK, InitJoysticksCallback,
+                                  NULL, DIEDFL_ATTACHEDONLY);
+        EndDialog(hWnd, 0);
+        return 1;
+      }
+
+	  // Check for device change - bberlin
+	  else if ( HIWORD(wParam) == CBN_SELCHANGE) {
+        index = SendMessage((HWND)lParam, CB_GETCURSEL, 0, 0);
+        value = SendMessage((HWND)lParam, CB_GETITEMDATA, index, 0);
+
+		switch ( LOWORD(wParam) ) {
+		  case IDC_COMBO_DEVICE_MENU: id_index = 0; break;
+		  case IDC_COMBO_DEVICE_EXIT: id_index = 1; break;
+		  default: return 0; break;
+		}
+
+		if ( user_devices[id_index] != value ) {
+		  user_devices[id_index] = value;
+          index = SendMessage(GetDlgItem(hWnd, id[id_index]), CB_RESETCONTENT, 0, 0);
+		  input_InitializeKeys(GetDlgItem(hWnd, id[id_index]), value);
+		  index = SendMessage(GetDlgItem(hWnd, id_modifier[id_index]), CB_RESETCONTENT, 0, 0);
+		  input_InitializeModifiers(GetDlgItem(hWnd, id_modifier[id_index]), value);
+		}
+      }
+
+      break;
+  }
+  return 0;
+}
+
+// ----------------------------------------------------------------------------
 // InitJoysticksCallback
 // ----------------------------------------------------------------------------
 BOOL CALLBACK InitJoysticksCallback(const DIDEVICEINSTANCE*     
@@ -543,6 +748,14 @@ BOOL CALLBACK InitJoysticksCallback(const DIDEVICEINSTANCE*
       if ( input_devices[i] == current_device ) {
         needed = true;
 		input_values[i] = joy_index;
+      }
+    }
+
+	    // Check if we need this joystick
+	for ( i = 0; i < 2; ++i ) {
+      if ( user_devices[i] == current_device ) {
+        needed = true;
+		user_values[i] = joy_index;
       }
     }
 
@@ -675,6 +888,10 @@ bool input_GetKeyboardState(byte* input) {
 
   int i;
   DIJOYSTATE js;
+  byte user_go[2];
+
+  user_go[0] = 0;
+  user_go[1] = 0;
 
   if(input_dinput == NULL) {
     logger_LogError("Direct input has not been initialized.", INPUT_SOURCE);
@@ -696,16 +913,48 @@ bool input_GetKeyboardState(byte* input) {
     logger_LogError(common_Format(hr), INPUT_SOURCE);
     return false;
   }
-  
-  for(int index = 0; index < 17; index++) {
-    if ( !input_values[index] )
+
+  // Check for User Keys
+  for(int index = 0; index < 2; index++) {
+    if ( !user_devices[index] ) {
+      if ( (keyboard[user_keys[index]]) ) {
+        if ( !user_modifiers[index] ) {
+          if ( !keyboard[DIK_LALT] && !keyboard[DIK_RALT] &&
+                 !keyboard[DIK_LCONTROL] && !keyboard[DIK_RCONTROL] &&
+                 !keyboard[DIK_LSHIFT] && !keyboard[DIK_RSHIFT] ) {
+             user_go[index] = 1;
+          }
+        }
+		else if ( (keyboard[user_modifiers[index]]) ) {
+          user_go[index] = 1;
+        }
+		else if ( (keyboard[user_modifiers[index]] == DIK_LALT) && 
+                   keyboard[DIK_RALT] ) {
+          user_go[index] = 1;
+        }
+		else if ( (keyboard[user_modifiers[index]] == DIK_LSHIFT) && 
+                   keyboard[DIK_RSHIFT] ) {
+          user_go[index] = 1;
+        }
+		else if ( (keyboard[user_modifiers[index]] == DIK_LCONTROL) && 
+                   keyboard[DIK_RCONTROL] ) {
+          user_go[index] = 1;
+        }
+      }
+      console_SetUserInput ( user_go, index );
+    }
+  }  
+
+
+  for(index = 0; index < 17; index++) {
+    if ( !input_devices[index] )
       input[index] = (keyboard[input_keys[index]])? 1: 0;
   }
   
   for ( i = 0; i < 2; ++i ) {
     // Get Joystick Input
     if ( input_joystick[i] == NULL )
-      return true;
+      break;
     hr = input_joystick[i]->Poll();
     if(FAILED(hr)) {
       hr = input_joystick[i]->Acquire();
@@ -719,56 +968,66 @@ bool input_GetKeyboardState(byte* input) {
 
 	// Check if we need the info
     for(int index = 0; index < 17; index++) {
-      if ( input_values[index] == i ) {
-        switch ( input_keys[index] ) {
-          case JOY_AXIS_UP:
-            input[index] = ( js.lY < -500 ) ? 1: 0;
-            break;
-          case JOY_AXIS_DOWN:
-            input[index] = ( js.lY > 500 ) ? 1: 0;
-            break;
-          case JOY_AXIS_LEFT:
-            input[index] = ( js.lX < -500 ) ? 1: 0;
-            break;
-          case JOY_AXIS_RIGHT:
-            input[index] = ( js.lX > 500 ) ? 1: 0;
-            break;
-          case JOY_PAD_UP:
-            input[index] = ( (js.rgdwPOV[0] > 32000 && js.rgdwPOV[0] < 37000) ||
-                             (js.rgdwPOV[0] >= 0 && js.rgdwPOV[0] < 4600) ) ? 1: 0;
-            break;
-          case JOY_PAD_DOWN:
-            input[index] = (js.rgdwPOV[0] > 13400 && js.rgdwPOV[0] < 22600) ? 1: 0;
-          break;
-          case JOY_PAD_LEFT:
-            input[index] = (js.rgdwPOV[0] > 22400 && js.rgdwPOV[0] < 31600) ? 1: 0;
-          break;
-          case JOY_PAD_RIGHT:
-            input[index] = (js.rgdwPOV[0] > 4400 && js.rgdwPOV[0] < 13600) ? 1: 0;
-          break;
-          case JOY_BUTTON_1:
-          case JOY_BUTTON_2:
-          case JOY_BUTTON_3:
-          case JOY_BUTTON_4:
-          case JOY_BUTTON_5:
-          case JOY_BUTTON_6:
-          case JOY_BUTTON_7:
-          case JOY_BUTTON_8:
-          case JOY_BUTTON_9:
-          case JOY_BUTTON_10:
-          case JOY_BUTTON_11:
-          case JOY_BUTTON_12:
-            input[index] = ( js.rgbButtons[input_keys[index]-JOY_BUTTON_1] & 0x80 ) ? 1: 0;
-          break;
-        }
+      if ( input_devices[index] && input_values[index] == i ) {
+        input_GetJoystickPartState ( input_keys[index], &input[index], &js );
+      }
+	}
 
-      } /* end if this part using this joystick */
-
-	} /* end for emulated part */
+	// Check if we need the info for user keys
+    for(index = 0; index < 2; index++) {
+      if ( user_devices[index] && user_values[index] == i ) {
+        input_GetJoystickPartState ( user_keys[index], &user_go[index], &js );
+		console_SetUserInput ( user_go, index );
+      }
+	}
 
   } /* end for PC joystick */
 
   return true;
+}
+
+void input_GetJoystickPartState ( byte part, byte *state, DIJOYSTATE *js ) {
+  switch ( part ) {
+    case JOY_AXIS_UP:
+      *state = ( js->lY < -500 ) ? 1: 0;
+      break;
+    case JOY_AXIS_DOWN:
+      *state = ( js->lY > 500 ) ? 1: 0;
+      break;
+    case JOY_AXIS_LEFT:
+      *state = ( js->lX < -500 ) ? 1: 0;
+      break;
+    case JOY_AXIS_RIGHT:
+      *state = ( js->lX > 500 ) ? 1: 0;
+      break;
+    case JOY_PAD_UP:
+      *state = ( (js->rgdwPOV[0] > 32000 && js->rgdwPOV[0] < 37000) ||
+                 (js->rgdwPOV[0] >= 0 && js->rgdwPOV[0] < 4600) ) ? 1: 0;
+      break;
+    case JOY_PAD_DOWN:
+      *state = (js->rgdwPOV[0] > 13400 && js->rgdwPOV[0] < 22600) ? 1: 0;
+    break;
+    case JOY_PAD_LEFT:
+      *state = (js->rgdwPOV[0] > 22400 && js->rgdwPOV[0] < 31600) ? 1: 0;
+    break;
+    case JOY_PAD_RIGHT:
+      *state = (js->rgdwPOV[0] > 4400 && js->rgdwPOV[0] < 13600) ? 1: 0;
+    break;
+    case JOY_BUTTON_1:
+    case JOY_BUTTON_2:
+    case JOY_BUTTON_3:
+    case JOY_BUTTON_4:
+    case JOY_BUTTON_5:
+    case JOY_BUTTON_6:
+    case JOY_BUTTON_7:
+    case JOY_BUTTON_8:
+    case JOY_BUTTON_9:
+    case JOY_BUTTON_10:
+    case JOY_BUTTON_11:
+    case JOY_BUTTON_12:
+      *state = ( js->rgbButtons[part-JOY_BUTTON_1] & 0x80 ) ? 1: 0;
+    break;
+  }
 }
 
 // ----------------------------------------------------------------------------
@@ -818,6 +1077,13 @@ void input_ShowController2Dialog(HWND hWnd, HINSTANCE hInstance) {
 // ----------------------------------------------------------------------------
 void input_ShowConsoleDialog(HWND hWnd, HINSTANCE hInstance) {
   DialogBox(hInstance, MAKEINTRESOURCE(IDD_DIALOG_CONSOLE), hWnd, (DLGPROC)input_ConsoleProcedure);
+}
+
+// ----------------------------------------------------------------------------
+// ShowConsoleDialog
+// ----------------------------------------------------------------------------
+void input_ShowUserDialog(HWND hWnd, HINSTANCE hInstance) {
+  DialogBox(hInstance, MAKEINTRESOURCE(IDD_DIALOG_USER), hWnd, (DLGPROC)input_UserProcedure);
 }
 
 // ----------------------------------------------------------------------------

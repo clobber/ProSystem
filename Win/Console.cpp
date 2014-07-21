@@ -79,7 +79,7 @@ static void console_SetCursorVisible(bool visible) {
 // ----------------------------------------------------------------------------
 // Exit
 // ----------------------------------------------------------------------------
-static void console_Exit( ) {
+void console_Exit( ) {
   configuration_Save(common_defaultPath + "ProSystem.ini");
   sound_Release( );
   display_Release( );
@@ -271,7 +271,7 @@ static void console_Save( ) {
 // ----------------------------------------------------------------------------
 // SetMenuEnabled
 // ----------------------------------------------------------------------------
-static void console_SetMenuEnabled(bool enabled) {
+void console_SetMenuEnabled(bool enabled) {
   sound_Stop( );
   menu_SetEnabled(enabled);
   if(!enabled && display_IsFullscreen( )) {
@@ -285,6 +285,24 @@ static void console_SetMenuEnabled(bool enabled) {
   display_Show( );
   if(!prosystem_paused) {
     sound_Play( );
+  }
+}
+
+// ----------------------------------------------------------------------------
+// SetUserInput
+// ----------------------------------------------------------------------------
+void console_SetUserInput(byte *data, int index) {
+
+  static byte user_data[2];
+
+  if ( user_data[index] != data[index] ) {
+    user_data[index] = data[index];
+    if ( data[index] ) {
+      if ( index == 0 )
+		console_SetMenuEnabled(!menu_IsEnabled( ));
+      else
+        console_Exit();
+    }
   }
 }
 
@@ -737,6 +755,9 @@ static LRESULT CALLBACK console_Procedure(HWND hWnd, UINT message, WPARAM wParam
         case IDM_INPUT_CONSOLE:
           input_ShowConsoleDialog(console_hWnd, console_hInstance);
           break;
+        case IDM_INPUT_USER:
+          input_ShowUserDialog(console_hWnd, console_hInstance);
+          break;
         case IDM_HELP_CONTENTS:
           help_ShowContents( );
           break;
@@ -785,7 +806,8 @@ static LRESULT CALLBACK console_Procedure(HWND hWnd, UINT message, WPARAM wParam
 // ----------------------------------------------------------------------------
 // Initialize
 // ----------------------------------------------------------------------------
-bool console_Initialize(HINSTANCE hInstance) {
+bool console_Initialize(HINSTANCE hInstance, std::string commandLine) {
+  std::string romfile;
   WNDCLASSEX wClass = {0};
   wClass.cbSize = sizeof(WNDCLASSEX);
   wClass.style = 0;
@@ -806,40 +828,70 @@ bool console_Initialize(HINSTANCE hInstance) {
     return false;
   }
   
-  console_hWnd = CreateWindowEx(CONSOLE_WINDOW_STYLE_EX, CONSOLE_TITLE, CONSOLE_TITLE, CONSOLE_WINDOW_STYLE, 0, 0, 0, 0, NULL, NULL, hInstance, NULL);
-  if(console_hWnd == NULL) {
-    logger_LogError("Failed to create the main window.", CONSOLE_SOURCE);
-    logger_LogError(common_GetErrorMessage( ), CONSOLE_SOURCE);
-    return false;
-  }  
-  if(!menu_Initialize(console_hWnd, hInstance)) {
-    logger_LogError("Failed to initialize the main menu.", CONSOLE_SOURCE);
-    return false;
+  database_Initialize( );
+  timer_Initialize( );
+  console_hInstance = hInstance;
+  romfile = configuration_Load(common_defaultPath + "ProSystem.ini", commandLine);
+
+  // Setup Display for Fullscreen or Windowed
+  if ( display_fullscreen ) {
+    console_hWnd = CreateWindowEx(WS_EX_TOPMOST, CONSOLE_TITLE, CONSOLE_TITLE, WS_POPUP, 0, 0, 0, 0, NULL, NULL, hInstance, NULL);
+    if(!menu_Initialize(console_hWnd, hInstance)) {
+      logger_LogError("Failed to initialize the main menu.", CONSOLE_SOURCE);
+      return false;
+	}
+    menu_SetEnabled(display_menuenabled);
+    if(!display_menuenabled) {
+      console_SetCursorVisible(false);    
+	}
+	if(!display_Initialize(console_hWnd)) {
+      logger_LogError("Failed to initialize the display.", CONSOLE_SOURCE);
+      return false;
+	}
+    SetWindowPos(console_hWnd, NULL, 0, 0, GetSystemMetrics(SM_CXSCREEN), GetSystemMetrics(SM_CYSCREEN), SWP_FRAMECHANGED | SWP_SHOWWINDOW | SWP_NOMOVE);
+    console_SetSize(0, 0, maria_visibleArea.GetLength( ) * display_zoom, maria_visibleArea.GetHeight( ) * display_zoom);
+	if(!display_SetFullscreen( )) {
+      logger_LogError("Failed to set the display to windowed mode.", CONSOLE_SOURCE);
+      return false;
+	}
   }
-  if(!display_Initialize(console_hWnd)) {
-    logger_LogError("Failed to initialize the display.", CONSOLE_SOURCE);
-    return false;
-  }
-  if(!display_SetWindowed( )) {
-    logger_LogError("Failed to set the display to windowed mode.", CONSOLE_SOURCE);
-    return false;
+  else {
+    console_hWnd = CreateWindowEx(CONSOLE_WINDOW_STYLE_EX, CONSOLE_TITLE, CONSOLE_TITLE, CONSOLE_WINDOW_STYLE, 0, 0, 0, 0, NULL, NULL, hInstance, NULL);
+    if(!menu_Initialize(console_hWnd, hInstance)) {
+      logger_LogError("Failed to initialize the main menu.", CONSOLE_SOURCE);
+      return false;
+	}
+    menu_SetEnabled(display_menuenabled);
+	if(!display_Initialize(console_hWnd)) {
+      logger_LogError("Failed to initialize the display.", CONSOLE_SOURCE);
+      return false;
+	}
+    SetWindowPos(console_hWnd, NULL, 0, 0, 0, 0, SWP_NOZORDER | SWP_FRAMECHANGED | SWP_SHOWWINDOW | SWP_NOMOVE | SWP_NOSIZE);
+    console_SetSize(0, 0, maria_visibleArea.GetLength( ) * display_zoom, maria_visibleArea.GetHeight( ) * display_zoom);
+	if(!display_SetWindowed( )) {
+      logger_LogError("Failed to set the display to windowed mode.", CONSOLE_SOURCE);
+      return false;
+	}
+
   }
   if(!sound_Initialize(console_hWnd)) {
     logger_LogError("Failed to initialize the sound.", CONSOLE_SOURCE);
     return false;
   }
-  
-  database_Initialize( );
-  timer_Initialize( );
   help_Initialize(console_hWnd);
-  console_hInstance = hInstance;
-  console_SetZoom(1);
-  configuration_Load(common_defaultPath + "ProSystem.ini");
   if(!input_Initialize(console_hWnd, hInstance)) {
     logger_LogError("Failed to initialize the input.", CONSOLE_SOURCE);
     return false;
   }
+
   ShowWindow(console_hWnd, SW_SHOW);
+  display_Clear( );
+  display_Show( );
+  if ( !romfile.empty() )
+    console_Open(common_Remove(romfile, '"'));
+  else {
+    console_SetMenuEnabled(true);
+  }
   return true;
 }
 
@@ -860,10 +912,10 @@ void console_Run( ) {
         return;
       }
     }
+    byte data[19];
+    input_GetKeyboardState(data);
     if(prosystem_active && !prosystem_paused && !console_suspended) {
       if(!console_rendering) {
-        byte data[19];
-        input_GetKeyboardState(data);
         prosystem_ExecuteFrame(data);
         console_rendering = true;
       }
@@ -915,11 +967,18 @@ void console_SetFullscreen(bool fullscreen) {
   if(fullscreen) {
     console_SetSuspended(true);
     GetWindowRect(console_hWnd, &console_windowRect);
+	console_windowRect.left = 0;
+	console_windowRect.right = 0;
+	console_windowRect.bottom = display_mode.height;
+	console_windowRect.right = display_mode.width;
+	console_SetWindowRect(console_windowRect);
     display_SetFullscreen( );
+	//SetWindowRect(console_hWnd, &console_windowRect);
     SetWindowLong(console_hWnd, GWL_EXSTYLE, WS_EX_TOPMOST);
     SetWindowLong(console_hWnd, GWL_STYLE, WS_POPUP);
     SetWindowPos(console_hWnd, NULL, 0, 0, GetSystemMetrics(SM_CXSCREEN), GetSystemMetrics(SM_CYSCREEN), SWP_FRAMECHANGED | SWP_SHOWWINDOW | SWP_NOMOVE);
-    display_Clear( );
+    //SetWindowPos(console_hWnd, NULL, 0, 0, display_mode.width, display_mode.height, SWP_FRAMECHANGED | SWP_SHOWWINDOW | SWP_NOMOVE);
+	display_Clear( );
     if(!menu_IsEnabled( )) {
       console_SetCursorVisible(false);
     }

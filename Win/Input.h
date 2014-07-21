@@ -69,7 +69,11 @@ extern void input_ReleaseJoysticks( );
 extern void input_ShowController1Dialog(HWND hWnd, HINSTANCE hInstance);
 extern void input_ShowController2Dialog(HWND hWnd, HINSTANCE hInstance);
 extern void input_ShowConsoleDialog(HWND hWnd, HINSTANCE hInstance);
+extern void input_ShowUserDialog(HWND hWnd, HINSTANCE hInstance);
 extern byte input_keys[17];
 extern byte input_devices[17];
+extern byte user_keys[2];
+extern byte user_devices[2];
+extern byte user_modifiers[2];
 
 #endif

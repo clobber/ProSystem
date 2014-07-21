@@ -28,7 +28,9 @@
 #define DISPLAY_HEIGHT 292
 
 bool display_stretched = false;
+bool display_menuenabled = true;
 byte display_zoom = 1;
+bool display_fullscreen = false;
 std::vector<Mode> display_modes;
 Mode display_mode = {640, 480, 8, 0, 0, 0};
 
@@ -38,7 +40,6 @@ static LPDIRECTDRAWSURFACE display_offscreen = NULL;
 static LPDIRECTDRAWPALETTE display_palette = NULL;
 static LPDIRECTDRAWCLIPPER display_clipper = NULL;
 static HWND display_hWnd = NULL;
-static bool display_fullscreen = false;
 static word display_palette16[256] = {0};
 static byte display_palette24[768] = {0};
 static uint display_palette32[256] = {0};
@@ -413,6 +414,7 @@ bool display_SetFullscreen( ) {
   offscreenDesc.dwFlags = DDSD_CAPS | DDSD_HEIGHT | DDSD_WIDTH;
   offscreenDesc.ddsCaps.dwCaps = DDSCAPS_OFFSCREENPLAIN;
   offscreenDesc.dwWidth = DISPLAY_LENGTH;
+
   offscreenDesc.dwHeight = DISPLAY_HEIGHT;
     
   hr = display_ddraw->CreateSurface(&offscreenDesc, &display_offscreen, NULL);

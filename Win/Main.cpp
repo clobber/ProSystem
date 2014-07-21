@@ -52,14 +52,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR commandLi
   main_ParseDefaultPath( );  
   logger_Initialize(common_defaultPath + "ProSystem.log");
   logger_level = LOGGER_LEVEL_DEBUG;
-  
-  console_Initialize(hInstance);
-  if(commandLine != NULL) {
-    std::string commandLineString = commandLine;
-    if(!commandLineString.empty( )) {
-      console_Open(common_Remove(commandLineString, '"'));
-    }
-  }
+
+  console_Initialize(hInstance, commandLine);
+
   console_Run( );
   
   logger_Release( );

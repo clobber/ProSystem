@@ -9,12 +9,15 @@
 #define IDD_DIALOG_CONTROLLER           102
 #define IDD_DIALOG_CONSOLE              103
 #define IDI_ICON_PROSYSTEM              111
+#define IDD_DIALOG_USER                 114
 #define IDC_BUTTON_ABOUT_OK             1170
 #define IDC_BUTTON_CONTROLLER_OK        1175
 #define IDC_COMBO_CONTROLLER_UP         1176
 #define IDC_COMBO_CONTROLLER_DOWN       1177
 #define IDC_COMBO_CONTROLLER_LEFT       1178
+#define IDC_COMBO_PART_MENU             1178
 #define IDC_COMBO_CONTROLLER_RIGHT      1179
+#define IDC_COMBO_PART_EXIT             1179
 #define IDC_COMBO_CONTROLLER_BUTTON1    1180
 #define IDC_COMBO_CONSOLE_RESET         1181
 #define IDC_COMBO_DEVICE_UP             1181
@@ -35,8 +38,14 @@
 #define IDC_STATIC_VERSION              1189
 #define IDC_COMBO_DEVICE_SELECT         1189
 #define IDC_COMBO_DEVICE_PAUSE          1190
+#define IDC_COMBO_DEVICE_MENU           1190
 #define IDC_COMBO_DEVICE_RIGHTD         1191
+#define IDC_COMBO_DEVICE_EXIT           1191
 #define IDC_COMBO_DEVICE_LEFTD          1192
+#define IDC_COMBO_MOD_MENU              1192
+#define IDC_COMBO_MOD_EXIT              1193
+#define IDC_BUTTON_USER_OK              1194
+#define IDC_BUTTON_USER_CANCEL          1195
 #define IDM_RECENT_SLOT0                30000
 #define IDM_RECENT_SLOT1                30001
 #define IDM_RECENT_SLOT2                30002
@@ -111,6 +120,7 @@
 #define IDM_INPUT_CONSOLE               40193
 #define IDM_HELP_CONTENTS               40195
 #define IDM_HELP_INDEX                  40196
+#define IDM_INPUT_USER                  40198
 #define IDM_MODES_BASE                  50000
 #define IDM_MODES_LAST                  51000
 
@@ -118,9 +128,9 @@
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        114
-#define _APS_NEXT_COMMAND_VALUE         40198
-#define _APS_NEXT_CONTROL_VALUE         1190
+#define _APS_NEXT_RESOURCE_VALUE        115
+#define _APS_NEXT_COMMAND_VALUE         40199
+#define _APS_NEXT_CONTROL_VALUE         1196
 #define _APS_NEXT_SYMED_VALUE           119
 #endif
 #endif

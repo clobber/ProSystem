@@ -48,6 +48,7 @@ void prosystem_Reset( ) {
     memory_Reset( );
     maria_Clear( );
     maria_Reset( );
+	riot_Reset ( );
     if(bios_enabled) {
       bios_Store( );
     }

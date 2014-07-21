@@ -24,7 +24,7 @@
 // ----------------------------------------------------------------------------
 #ifndef CONSOLE_H
 #define CONSOLE_H
-#define CONSOLE_VERSION 1.1
+#define CONSOLE_VERSION 1.2
 #define CONSOLE_TITLE "ProSystem Emulator"
 #define NULL 0
 
@@ -46,13 +46,16 @@ typedef unsigned char byte;
 typedef unsigned short word;
 typedef unsigned int uint;
 
-extern bool console_Initialize(HINSTANCE hInstance);
+extern bool console_Initialize(HINSTANCE hInstance, std::string commandLine);
 extern void console_Run( );
 extern void console_Open(std::string filename);
 extern void console_SetZoom(byte zoom);
 extern void console_SetFullscreen(bool fullscreen);
 extern RECT console_GetWindowRect( );
 extern void console_SetWindowRect(RECT windowRect);
+extern void console_SetMenuEnabled(bool enabled);
+extern void console_SetUserInput(byte *data, int index);
+extern void console_Exit(void);
 extern std::string console_recent[10];
 extern std::string console_savePath;
 extern byte console_frameSkip;

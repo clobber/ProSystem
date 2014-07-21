@@ -33,7 +33,8 @@ typedef unsigned char byte;
 typedef unsigned short word;
 typedef unsigned int uint;
 
-extern void configuration_Load(std::string filename);
+extern std::string configuration_CommandLine(std::string commandLine);
+extern std::string configuration_Load(std::string filename, std::string commandLine);
 extern void configuration_Save(std::string filename);
 extern bool configuration_enabled;
 
