@@ -1,0 +1,145 @@
+<html>
+<body>
+<pre>
+<h1>Build Log</h1>
+<h3>
+--------------------Configuration: ProSystem - Win32 Release--------------------
+</h3>
+<h3>Command Lines</h3>
+Creating command line "rc.exe /l 0x409 /fo".\Bin\Release/ProSystem.res" /i "Win" /d "NDEBUG" "E:\source\prosystem\ProSystem_1_3d_Src_DEV\Win\ProSystem.rc"" 
+Creating temporary file "E:\Profiles\Greg\LOCALS~1\Temp\RSP33.tmp" with contents
+[
+/nologo /ML /W3 /GX /O2 /Ob2 /I "Core" /I "Win" /I "Lib" /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_MBCS" /FR".\Bin\Release/" /Fo".\Bin\Release/" /Fd".\Bin\Release/" /FD /c 
+"E:\source\prosystem\ProSystem_1_3d_Src_DEV\Core\Archive.cpp"
+"E:\source\prosystem\ProSystem_1_3d_Src_DEV\Core\Bios.cpp"
+"E:\source\prosystem\ProSystem_1_3d_Src_DEV\Core\Cartridge.cpp"
+"E:\source\prosystem\ProSystem_1_3d_Src_DEV\Core\Hash.cpp"
+"E:\source\prosystem\ProSystem_1_3d_Src_DEV\Core\Logger.cpp"
+"E:\source\prosystem\ProSystem_1_3d_Src_DEV\Core\Maria.cpp"
+"E:\source\prosystem\ProSystem_1_3d_Src_DEV\Core\Memory.cpp"
+"E:\source\prosystem\ProSystem_1_3d_Src_DEV\Core\Palette.cpp"
+"E:\source\prosystem\ProSystem_1_3d_Src_DEV\Core\Pokey.cpp"
+"E:\source\prosystem\ProSystem_1_3d_Src_DEV\Core\ProSystem.cpp"
+"E:\source\prosystem\ProSystem_1_3d_Src_DEV\Core\Region.cpp"
+"E:\source\prosystem\ProSystem_1_3d_Src_DEV\Core\Riot.cpp"
+"E:\source\prosystem\ProSystem_1_3d_Src_DEV\Core\Sally.cpp"
+"E:\source\prosystem\ProSystem_1_3d_Src_DEV\Core\Tia.cpp"
+"E:\source\prosystem\ProSystem_1_3d_Src_DEV\Win\About.cpp"
+"E:\source\prosystem\ProSystem_1_3d_Src_DEV\Win\Common.cpp"
+"E:\source\prosystem\ProSystem_1_3d_Src_DEV\Win\Configuration.cpp"
+"E:\source\prosystem\ProSystem_1_3d_Src_DEV\Win\Console.cpp"
+"E:\source\prosystem\ProSystem_1_3d_Src_DEV\Win\Database.cpp"
+"E:\source\prosystem\ProSystem_1_3d_Src_DEV\Win\Display.cpp"
+"E:\source\prosystem\ProSystem_1_3d_Src_DEV\Win\Help.cpp"
+"E:\source\prosystem\ProSystem_1_3d_Src_DEV\Win\Input.cpp"
+"E:\source\prosystem\ProSystem_1_3d_Src_DEV\Win\Main.cpp"
+"E:\source\prosystem\ProSystem_1_3d_Src_DEV\Win\Menu.cpp"
+"E:\source\prosystem\ProSystem_1_3d_Src_DEV\Win\Sound.cpp"
+"E:\source\prosystem\ProSystem_1_3d_Src_DEV\Win\Timer.cpp"
+]
+Creating command line "cl.exe @E:\Profiles\Greg\LOCALS~1\Temp\RSP33.tmp" 
+Creating temporary file "E:\Profiles\Greg\LOCALS~1\Temp\RSP34.tmp" with contents
+[
+kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib ddraw.lib dinput.lib dxguid.lib winmm.lib dsound.lib htmlhelp.lib zlib.lib /nologo /subsystem:windows /incremental:no /pdb:".\Bin\Release/ProSystem.pdb" /machine:I386 /out:".\Bin\Release/ProSystem.exe" /libpath:"Lib" 
+.\Bin\Release\Archive.obj
+.\Bin\Release\Bios.obj
+.\Bin\Release\Cartridge.obj
+.\Bin\Release\Hash.obj
+.\Bin\Release\Logger.obj
+.\Bin\Release\Maria.obj
+.\Bin\Release\Memory.obj
+.\Bin\Release\Palette.obj
+.\Bin\Release\Pokey.obj
+.\Bin\Release\ProSystem.obj
+.\Bin\Release\Region.obj
+.\Bin\Release\Riot.obj
+.\Bin\Release\Sally.obj
+.\Bin\Release\Tia.obj
+.\Bin\Release\About.obj
+.\Bin\Release\Common.obj
+.\Bin\Release\Configuration.obj
+.\Bin\Release\Console.obj
+.\Bin\Release\Database.obj
+.\Bin\Release\Display.obj
+.\Bin\Release\Help.obj
+.\Bin\Release\Input.obj
+.\Bin\Release\Main.obj
+.\Bin\Release\Menu.obj
+.\Bin\Release\Sound.obj
+.\Bin\Release\Timer.obj
+.\Bin\Release\ProSystem.res
+]
+Creating command line "link.exe @E:\Profiles\Greg\LOCALS~1\Temp\RSP34.tmp"
+<h3>Output Window</h3>
+Compiling resources...
+Compiling...
+Archive.cpp
+Bios.cpp
+Cartridge.cpp
+Hash.cpp
+Logger.cpp
+Maria.cpp
+Memory.cpp
+Palette.cpp
+Pokey.cpp
+ProSystem.cpp
+Region.cpp
+Riot.cpp
+Sally.cpp
+Tia.cpp
+About.cpp
+Common.cpp
+Configuration.cpp
+Console.cpp
+Database.cpp
+Display.cpp
+Generating Code...
+Compiling...
+Help.cpp
+Input.cpp
+Main.cpp
+Menu.cpp
+Sound.cpp
+Timer.cpp
+Generating Code...
+Linking...
+Creating temporary file "E:\Profiles\Greg\LOCALS~1\Temp\RSP36.tmp" with contents
+[
+/nologo /o".\Bin\Release/ProSystem.bsc" 
+.\Bin\Release\Archive.sbr
+.\Bin\Release\Bios.sbr
+.\Bin\Release\Cartridge.sbr
+.\Bin\Release\Hash.sbr
+.\Bin\Release\Logger.sbr
+.\Bin\Release\Maria.sbr
+.\Bin\Release\Memory.sbr
+.\Bin\Release\Palette.sbr
+.\Bin\Release\Pokey.sbr
+.\Bin\Release\ProSystem.sbr
+.\Bin\Release\Region.sbr
+.\Bin\Release\Riot.sbr
+.\Bin\Release\Sally.sbr
+.\Bin\Release\Tia.sbr
+.\Bin\Release\About.sbr
+.\Bin\Release\Common.sbr
+.\Bin\Release\Configuration.sbr
+.\Bin\Release\Console.sbr
+.\Bin\Release\Database.sbr
+.\Bin\Release\Display.sbr
+.\Bin\Release\Help.sbr
+.\Bin\Release\Input.sbr
+.\Bin\Release\Main.sbr
+.\Bin\Release\Menu.sbr
+.\Bin\Release\Sound.sbr
+.\Bin\Release\Timer.sbr]
+Creating command line "bscmake.exe @E:\Profiles\Greg\LOCALS~1\Temp\RSP36.tmp"
+Creating browse info file...
+<h3>Output Window</h3>
+
+
+
+<h3>Results</h3>
+ProSystem.exe - 0 error(s), 0 warning(s)
+</pre>
+</body>
+</html>

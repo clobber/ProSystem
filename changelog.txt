@@ -2,6 +2,15 @@ Original program by Greg Stanton.
 Revision history:
 
 
+Version 1.3d (2009/04/02) - Greg DeMent
+---------------------------------------
+2nd button now works correctly in Dark Chambers
+Joystick button emulation is now much more accurate
+- Distinct 1 button and 2 button joystick modes are now properly emulated (riot.cpp)
+- SWCHB is now writable allowing games to toggle the button mode (memory.cpp)
+- SWCHB default settings match testing on real console.
+
+
 Version 1.3c (2009/03/25) - Greg DeMent
 ---------------------------------------
 minor update to handling of window position:

@@ -39,6 +39,11 @@ void memory_Reset( ) {
   for(index = 0; index < 16384; index++) {
     memory_rom[index] = 0;
   }
+
+		/*gdement:	initialize SWCHB to match observations on real console.
+					Most importantly, the system defaults to 1 button mode.*/
+  memory_ram[SWCHB] |= 0x34;	//turn on bits 2 and 4 to enable 1 button mode for each player
+								//also turns on bit 5 because it was on when tested with real console.
 }
 // ----------------------------------------------------------------------------
 // Read
@@ -113,8 +118,12 @@ void memory_Write(word address, byte data) {
       case AUDV1:
         tia_SetRegister(AUDV1, data);
         break;
-      case SWCHB:
-        break;
+      case SWCHB:	/*gdement:  This register is writable on hardware, despite documentation.
+							Writes to this location are used to toggle 1/2 button joystick modes.
+							Don't know if all bits take the write or only selected bits.
+							Desert Falcon code troubles itself to treat all bits as significant, so they prob are.*/
+		memory_ram[SWCHB]=data;
+		break;
       case CTLSWB:
         break;
       case TIM1T:
