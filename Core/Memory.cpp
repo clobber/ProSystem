@@ -39,11 +39,6 @@ void memory_Reset( ) {
   for(index = 0; index < 16384; index++) {
     memory_rom[index] = 0;
   }
-
-		/*gdement:	initialize SWCHB to match observations on real console.
-					Most importantly, the system defaults to 1 button mode.*/
-  memory_ram[SWCHB] |= 0x34;	//turn on bits 2 and 4 to enable 1 button mode for each player
-								//also turns on bit 5 because it was on when tested with real console.
 }
 // ----------------------------------------------------------------------------
 // Read
@@ -119,19 +114,12 @@ void memory_Write(word address, byte data) {
       case AUDV1:
         tia_SetRegister(AUDV1, data);
         break;
-      case SWCHB:	/*gdement:  Writes to this location are used to toggle 1/2 button joystick modes. */
-	    //The following would use CTLSWB as a mask for which bits are writable in SWCHB. (1=writable)
-		//However, this might not be quite correct behavior, so it's commented out for now.*/
-		/*byte ormask;				//set up 2 masks to allow changing bits each direction, filtered by CTLSWB
-		byte andmask;
-		ormask = data & memory_ram[CTLSWB];
-		andmask = data | (~memory_ram[CTLSWB]);
-		memory_ram[SWCHB] |= ormask;
-		memory_ram[SWCHB] &= andmask;*/
-		memory_ram[SWCHB] = data;
+	  case SWCHA:	/*gdement:  Writing here actually writes to DRA inside the RIOT chip.
+					This value only indirectly affects output of SWCHA.  Ditto for SWCHB.*/
+		riot_SetDRA(data);
 		break;
-      case CTLSWB:
-		memory_ram[CTLSWB] = data;
+	  case SWCHB:
+		riot_SetDRB(data);
 		break;
       case TIM1T:
       case TIM1T | 0x8:
@@ -164,6 +152,7 @@ void memory_Write(word address, byte data) {
           memory_ram[address + 8192] = data;
         }
         break;
+	/*TODO: gdement:  test here for debug port.  Don't put it in the switch because that will change behavior.*/
     }
   }
   else {

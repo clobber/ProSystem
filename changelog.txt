@@ -2,6 +2,20 @@ Original program by Greg Stanton.
 Revision history:
 
 
+Version 1.3e (2009/06/04) - Greg DeMent
+---------------------------------------
+Improved emulation of RIOT's SWCHA and SWCHB ports	(riot.cpp)
+Implemented the RIOT's DRA and DRB registers.  Stores to SWCHA/SWCHB now land here.
+1/2 button modes are now toggled correctly (fixes 1.3d control bug in Fatal Run, Hat Trick, One on One, Water Ski)
+Value of SWCHA now reflects the interactions of CTLSWA and the RIOT's DRA register. Ditto for SWCHB.
+This makes behavior of console switches more accurate in odd scenarios (it's possible to lock them active)
+Thanks to raz0red and groovybee for their help figuring these things out
+Reposted 2009/06/06 to fix:
+	version number (was reporting 1.3d2)
+	missing call to riot_SetDRA() in the memory_Write switch block
+	riot_Reset() wasn't resetting DRA and DRB
+
+
 Version 1.3d2 (2009/04/15) - Greg DeMent
 ----------------------------------------
 Fixed bug in 1.3d, which had caused player 2 button to be permanently held down.
