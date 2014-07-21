@@ -77,8 +77,6 @@ void riot_SetInput(const byte* input) {
 		test ROM showed that real system starts in 1 button mode also with bit 5 turned on.
 		SWCHB is writable to toggle the mode, despite documentation claiming it's read only.
 		Real games do this to enter 2 button mode.  (these aspects emulated in Memory.cpp) */
-
-
   if(memory_ram[SWCHB] & 0x04)	//first player in 1 button mode
   {
 	  memory_ram[INPT0] &= 0x7f;		//new style buttons are always off in this mode
@@ -117,7 +115,7 @@ void riot_SetInput(const byte* input) {
   {
 	  memory_ram[INPT2] &= 0x7f;
 	  memory_ram[INPT3] &= 0x7f;
-	  if(input[0x10] || input[0x11])
+	  if(input[0x0a] || input[0x0b])
 	  {
 		  memory_ram[INPT5] &= 0x7f;
 	  }
@@ -129,7 +127,7 @@ void riot_SetInput(const byte* input) {
   else
   {
 	  memory_ram[INPT5] |= 0x80;
-	  if(input[0x10])
+	  if(input[0x0a])
 	  {
 		  memory_ram[INPT3] |= 0x80;
 	  }
@@ -137,7 +135,7 @@ void riot_SetInput(const byte* input) {
 	  {
 		  memory_ram[INPT3] &= 0x7f;
 	  }
-	  if(input[0x11])
+	  if(input[0x0b])
 	  {
 		  memory_ram[INPT2] |= 0x80;
 	  }

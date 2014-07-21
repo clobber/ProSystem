@@ -2,6 +2,10 @@ Original program by Greg Stanton.
 Revision history:
 
 
+Version 1.3d2 (2009/04/15) - Greg DeMent
+----------------------------------------
+Fixed bug in 1.3d, which had caused player 2 button to be permanently held down.
+
 Version 1.3d (2009/04/02) - Greg DeMent
 ---------------------------------------
 2nd button now works correctly in Dark Chambers

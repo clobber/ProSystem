@@ -73,6 +73,7 @@ byte memory_Read(word address) {
 // Write
 // ----------------------------------------------------------------------------
 void memory_Write(word address, byte data) {
+
   if(!memory_rom[address]) {
     switch(address) {
       case WSYNC:
@@ -118,14 +119,20 @@ void memory_Write(word address, byte data) {
       case AUDV1:
         tia_SetRegister(AUDV1, data);
         break;
-      case SWCHB:	/*gdement:  This register is writable on hardware, despite documentation.
-							Writes to this location are used to toggle 1/2 button joystick modes.
-							Don't know if all bits take the write or only selected bits.
-							Desert Falcon code troubles itself to treat all bits as significant, so they prob are.*/
-		memory_ram[SWCHB]=data;
+      case SWCHB:	/*gdement:  Writes to this location are used to toggle 1/2 button joystick modes. */
+	    //The following would use CTLSWB as a mask for which bits are writable in SWCHB. (1=writable)
+		//However, this might not be quite correct behavior, so it's commented out for now.*/
+		/*byte ormask;				//set up 2 masks to allow changing bits each direction, filtered by CTLSWB
+		byte andmask;
+		ormask = data & memory_ram[CTLSWB];
+		andmask = data | (~memory_ram[CTLSWB]);
+		memory_ram[SWCHB] |= ormask;
+		memory_ram[SWCHB] &= andmask;*/
+		memory_ram[SWCHB] = data;
 		break;
       case CTLSWB:
-        break;
+		memory_ram[CTLSWB] = data;
+		break;
       case TIM1T:
       case TIM1T | 0x8:
         riot_SetTimer(TIM1T, data);
