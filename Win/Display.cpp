@@ -607,7 +607,7 @@ bool display_Show( ) {
       return false;
     }
   }    
-  
+
   RECT targetRect = (display_stretched)? display_GetStretchedRect( ): display_GetCenteredRect( );
   RECT sourceRect = {0, 0, maria_visibleArea.GetLength( ), maria_visibleArea.GetHeight( )};
   

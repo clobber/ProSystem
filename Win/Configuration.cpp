@@ -147,6 +147,7 @@ void configuration_Load(std::string filename) {
   
   for(index = 0; index < 17; index++) {
     input_keys[index] = configuration_ReadPrivateUint(CONFIGURATION_SECTION_INPUT, "Key" + common_Format(index), input_keys[index]);
+    input_devices[index] = configuration_ReadPrivateUint(CONFIGURATION_SECTION_INPUT, "Device" + common_Format(index), input_devices[index]);
   }
 
   console_savePath = configuration_ReadPrivatePath(CONFIGURATION_SECTION_CONSOLE, "Save.Path", "");
@@ -183,6 +184,7 @@ void configuration_Save(std::string filename) {
 
   for(index = 0; index < 17; index++) {
     configuration_WritePrivateUint(CONFIGURATION_SECTION_INPUT, "Key" + common_Format(index), input_keys[index]);
+    configuration_WritePrivateUint(CONFIGURATION_SECTION_INPUT, "Device" + common_Format(index), input_devices[index]);
   }
   configuration_WritePrivatePath(CONFIGURATION_SECTION_CONSOLE, "Save.Path", console_savePath);
 

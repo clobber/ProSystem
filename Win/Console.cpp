@@ -824,10 +824,6 @@ bool console_Initialize(HINSTANCE hInstance) {
     logger_LogError("Failed to set the display to windowed mode.", CONSOLE_SOURCE);
     return false;
   }
-  if(!input_Initialize(console_hWnd, hInstance)) {
-    logger_LogError("Failed to initialize the input.", CONSOLE_SOURCE);
-    return false;
-  }
   if(!sound_Initialize(console_hWnd)) {
     logger_LogError("Failed to initialize the sound.", CONSOLE_SOURCE);
     return false;
@@ -839,6 +835,10 @@ bool console_Initialize(HINSTANCE hInstance) {
   console_hInstance = hInstance;
   console_SetZoom(1);
   configuration_Load(common_defaultPath + "ProSystem.ini");
+  if(!input_Initialize(console_hWnd, hInstance)) {
+    logger_LogError("Failed to initialize the input.", CONSOLE_SOURCE);
+    return false;
+  }
   ShowWindow(console_hWnd, SW_SHOW);
   return true;
 }

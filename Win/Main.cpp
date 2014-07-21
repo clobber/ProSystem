@@ -27,6 +27,7 @@
 #include "Console.h"
 #include "Common.h"
 #include "Logger.h"
+#include "Input.h"
 #define NULL 0
 
 // ----------------------------------------------------------------------------
