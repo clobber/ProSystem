@@ -23,12 +23,14 @@
 // Console.cpp
 // ----------------------------------------------------------------------------
 #include "Console.h"
-#define CONSOLE_SOURCE "Console.cpp"
 #define WM_UNINITMENUPOPUP 0x125
 
 std::string console_recent[10];
 std::string console_savePath;
+std::string console_SSS;
+
 byte console_frameSkip = 0;
+byte nf=0;
 
 static const DWORD CONSOLE_WINDOW_STYLE = WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX;
 static const DWORD CONSOLE_WINDOW_STYLE_EX = WS_EX_CLIENTEDGE;
@@ -180,6 +182,7 @@ static void console_Open( ) {
   char path[_MAX_PATH] = {0};
   if(cartridge_IsLoaded( )) {
     strcpy(path, cartridge_filename.c_str( ));
+	nf=1;
     if(common_GetExtension(cartridge_filename) == ".zip") {
       filterIndex = 3;
     }
@@ -200,6 +203,7 @@ static void console_Open( ) {
   
   if(GetOpenFileName(&openDialog)) {
     console_Open(openDialog.lpstrFile);
+	console_SSS=openDialog.lpstrFile;
   }
   if(!menu_IsEnabled( ) && display_IsFullscreen( )) {
     console_SetCursorVisible(false);
@@ -257,7 +261,7 @@ static void console_Save( ) {
 
   if(GetSaveFileName(&saveDialog)) {
     if(!prosystem_Save(saveDialog.lpstrFile, (saveDialog.nFilterIndex == 3)? true: false)) {
-      logger_LogError("Failed to save the state to a file.", CONSOLE_SOURCE);    
+      logger_LogError(IDS_CONSOLE7,"");    
     }
     else {
       console_savePath = saveDialog.lpstrFile;
@@ -381,26 +385,58 @@ static void console_OpenPalette( ) {
 static void console_SaveScreenshot( ) {
   console_SetCursorVisible(true);  
   
-  char buffer[_MAX_PATH] = {0};
-  OPENFILENAME saveDialog = {0};
-  saveDialog.lStructSize = sizeof(OPENFILENAME);
-  saveDialog.hwndOwner = console_hWnd;
-  saveDialog.lpstrFilter = "All Files (*.*)\0*.*\0Bmp Files (*.bmp)\0*.bmp\0";
-  saveDialog.nFilterIndex = 2;
-  saveDialog.lpstrFile = buffer;
-  saveDialog.nMaxFile = _MAX_PATH;
-  saveDialog.nMaxFileTitle = _MAX_PATH;
-  saveDialog.lpstrDefExt = "bmp";
-  saveDialog.lpstrTitle = "Save Screenshot";
-  
-  if(GetSaveFileName(&saveDialog)) {
-    if(!display_TakeScreenshot(saveDialog.lpstrFile)) {
-      logger_LogError("Failed to save the screenshot to a file.", CONSOLE_SOURCE);
-    }
+   
+  char buf[270];
+  char bbf[20];
+std::string console_S;  
+  int position = console_SSS.rfind('.');
+  if(position != -1) {
+    console_S=console_SSS.substr(0, position);
   }
+  if (screenshot1)
+  {
+  console_S=common_Remove(console_S,'!');
+  console_S=common_Remove(console_S,'[');
+  console_S=common_Remove(console_S,']');
+  console_S=common_Remove(console_S,'(');
+  console_S=common_Remove(console_S,')');
+  console_S=common_Remove(console_S,',');
+  }
+  if (screenshot2)
+  {
+  console_S=common_Replace(console_S, ' ','_');
+  }
+
+  
+  strcpy(buf,console_S.c_str());
+  sprintf(bbf, "%.2d", nf);
+  nf++;
+  strcat(buf,"_");
+  strcat(buf,bbf);
+  strcat(buf,".bmp");
+    
+
+    if(!display_TakeScreenshot(buf)) {
+      logger_LogError(IDS_CONSOLE1,"");
+    }
   if(!menu_IsEnabled( ) && display_IsFullscreen( )) {
     console_SetCursorVisible(false);
   }
+}
+
+// ----------------------------------------------------------------------------
+// SaveScreenshot1
+// ----------------------------------------------------------------------------
+static void console_SaveScreenshot1( ) {
+	screenshot1=! screenshot1;
+  
+}
+
+// ----------------------------------------------------------------------------
+// SaveScreenshot2
+// ----------------------------------------------------------------------------
+static void console_SaveScreenshot2( ) {
+	screenshot2=! screenshot2;  
 }
 
 // ----------------------------------------------------------------------------
@@ -470,6 +506,7 @@ static void console_OpenBios( ) {
 static void console_SetSampleRate(uint sampleRate) {
   sound_Stop( );
   sound_SetSampleRate(sampleRate);
+  menu_Refresh( );
   if(!prosystem_paused) {
     sound_Play( );
   }
@@ -644,6 +681,15 @@ static LRESULT CALLBACK console_Procedure(HWND hWnd, UINT message, WPARAM wParam
         case IDM_DISPLAY_SCREENSHOT:
           console_SaveScreenshot( );
           break;
+
+//Leonis
+        case ID_OPTIONS_DISPLAY_SCREENSHOT_REMOVENONWEBSYMBOLS:
+          console_SaveScreenshot1( );
+          break;
+		case ID_OPTIONS_DISPLAY_SCREENSHOT_REPLACESPACESBY:
+          console_SaveScreenshot2( );
+          break;
+
         case IDM_SOUND_MUTE:
           console_SetMuted(!sound_IsMuted( ));
           break;
@@ -823,8 +869,8 @@ bool console_Initialize(HINSTANCE hInstance, std::string commandLine) {
   wClass.lpszClassName = CONSOLE_TITLE;
   
   if(!RegisterClassEx(&wClass)) {
-    logger_LogError("Failed to register the window class.", CONSOLE_SOURCE);
-    logger_LogError(common_GetErrorMessage( ), CONSOLE_SOURCE);
+    logger_LogError(IDS_CONSOLE2,"");
+    logger_LogError(common_GetErrorMessage( ), "");
     return false;
   }
   
@@ -837,7 +883,7 @@ bool console_Initialize(HINSTANCE hInstance, std::string commandLine) {
   if ( display_fullscreen ) {
     console_hWnd = CreateWindowEx(WS_EX_TOPMOST, CONSOLE_TITLE, CONSOLE_TITLE, WS_POPUP, 0, 0, 0, 0, NULL, NULL, hInstance, NULL);
     if(!menu_Initialize(console_hWnd, hInstance)) {
-      logger_LogError("Failed to initialize the main menu.", CONSOLE_SOURCE);
+      logger_LogError(IDS_CONSOLE3,"");
       return false;
 	}
     menu_SetEnabled(display_menuenabled);
@@ -845,42 +891,42 @@ bool console_Initialize(HINSTANCE hInstance, std::string commandLine) {
       console_SetCursorVisible(false);    
 	}
 	if(!display_Initialize(console_hWnd)) {
-      logger_LogError("Failed to initialize the display.", CONSOLE_SOURCE);
+      logger_LogError(IDS_CONSOLE4,"");
       return false;
 	}
     SetWindowPos(console_hWnd, NULL, 0, 0, GetSystemMetrics(SM_CXSCREEN), GetSystemMetrics(SM_CYSCREEN), SWP_FRAMECHANGED | SWP_SHOWWINDOW | SWP_NOMOVE);
     console_SetSize(0, 0, maria_visibleArea.GetLength( ) * display_zoom, maria_visibleArea.GetHeight( ) * display_zoom);
 	if(!display_SetFullscreen( )) {
-      logger_LogError("Failed to set the display to windowed mode.", CONSOLE_SOURCE);
+      logger_LogError(IDS_CONSOLE5,"");
       return false;
 	}
   }
   else {
     console_hWnd = CreateWindowEx(CONSOLE_WINDOW_STYLE_EX, CONSOLE_TITLE, CONSOLE_TITLE, CONSOLE_WINDOW_STYLE, 0, 0, 0, 0, NULL, NULL, hInstance, NULL);
     if(!menu_Initialize(console_hWnd, hInstance)) {
-      logger_LogError("Failed to initialize the main menu.", CONSOLE_SOURCE);
+      logger_LogError(IDS_CONSOLE3,"");
       return false;
 	}
     menu_SetEnabled(display_menuenabled);
 	if(!display_Initialize(console_hWnd)) {
-      logger_LogError("Failed to initialize the display.", CONSOLE_SOURCE);
+      logger_LogError(IDS_CONSOLE4,"");
       return false;
 	}
     SetWindowPos(console_hWnd, NULL, 0, 0, 0, 0, SWP_NOZORDER | SWP_FRAMECHANGED | SWP_SHOWWINDOW | SWP_NOMOVE | SWP_NOSIZE);
     console_SetSize(0, 0, maria_visibleArea.GetLength( ) * display_zoom, maria_visibleArea.GetHeight( ) * display_zoom);
 	if(!display_SetWindowed( )) {
-      logger_LogError("Failed to set the display to windowed mode.", CONSOLE_SOURCE);
+      logger_LogError(IDS_CONSOLE5,"");
       return false;
 	}
 
   }
   if(!sound_Initialize(console_hWnd)) {
-    logger_LogError("Failed to initialize the sound.", CONSOLE_SOURCE);
+    logger_LogError(IDS_CONSOLE6,"");
     return false;
   }
   help_Initialize(console_hWnd);
   if(!input_Initialize(console_hWnd, hInstance)) {
-    logger_LogError("Failed to initialize the input.", CONSOLE_SOURCE);
+    logger_LogError(IDS_CONSOLE6,"");
     return false;
   }
 

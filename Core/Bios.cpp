@@ -23,7 +23,6 @@
 // Bios.cpp
 // ----------------------------------------------------------------------------
 #include "Bios.h"
-#define BIOS_SOURCE "Bios.cpp"
 
 bool bios_enabled = false;
 std::string bios_filename;
@@ -36,38 +35,38 @@ static word bios_size = 0;
 // ----------------------------------------------------------------------------
 bool bios_Load(std::string filename) {
   if(filename.empty( ) || filename.length( ) == 0) {
-    logger_LogError("Bios filename is invalid.", BIOS_SOURCE);
+    logger_LogError(IDS_BIOS1, "");
     return false;
   }
   
   bios_Release( );
-  logger_LogInfo("Opening bios file " + filename + ".");
+  logger_LogInfo(IDS_BIOS2, filename);
 
   bios_size = archive_GetUncompressedFileSize(filename);
   if(bios_size == 0) {
     FILE* file = fopen(filename.c_str( ), "rb");
     if(file == NULL) {
-      logger_LogError("Failed to open the bios file " + filename + " for reading.", BIOS_SOURCE);
+      logger_LogError(IDS_BIOS3, filename);
       return false;
     } 
   
     if(fseek(file, 0, SEEK_END)) {
       fclose(file);
-      logger_LogError("Failed to find the end of the bios file.", BIOS_SOURCE);
+      logger_LogError(IDS_BIOS4,"");
       return false;
     }
   
     bios_size = ftell(file);
     if(fseek(file, 0, SEEK_SET)) {
       fclose(file);
-      logger_LogError("Failed to find the size of the bios file.", BIOS_SOURCE);
+      logger_LogError(IDS_BIOS5,"");
       return false;
     }
   
     bios_data = new byte[bios_size];
     if(fread(bios_data, 1, bios_size, file) != bios_size && ferror(file)) {
       fclose(file);
-      logger_LogError("Failed to read the bios data.", BIOS_SOURCE);
+      logger_LogError(IDS_BIOS6,"");
       bios_Release( );
       return false;
     }

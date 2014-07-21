@@ -23,7 +23,6 @@
 // Display.cpp
 // ----------------------------------------------------------------------------
 #include "Display.h"
-#define DISPLAY_SOURCE "Display.cpp"
 #define DISPLAY_LENGTH 320
 #define DISPLAY_HEIGHT 292
 
@@ -77,22 +76,22 @@ static HRESULT WINAPI display_EnumerateModes(LPDDSURFACEDESC surfaceDesc, LPVOID
 static bool display_SetClipper( ) {
   HRESULT hr = display_ddraw->CreateClipper(0, &display_clipper, NULL);
   if(FAILED(hr) || display_clipper == NULL) {
-    logger_LogError("Failed to create the clipper.", DISPLAY_SOURCE);
-    logger_LogError(common_Format(hr), DISPLAY_SOURCE);
+    logger_LogError(IDS_DISPLAY1,"");
+    logger_LogError("",common_Format(hr));
     return false;
   }
   
   hr = display_clipper->SetHWnd(0, display_hWnd);
   if(FAILED(hr)) {
-    logger_LogError("Failed to attach the window handle to the clipper.", DISPLAY_SOURCE);
-    logger_LogError(common_Format(hr), DISPLAY_SOURCE);
+    logger_LogError(IDS_DISPLAY2, "");
+    logger_LogError("",common_Format(hr));
     return false;
   }
 
   hr = display_primary->SetClipper(display_clipper);
   if(FAILED(hr)) {
-    logger_LogError("Failed to attach the clipper to the primary surface.", DISPLAY_SOURCE);
-    logger_LogError(common_Format(hr), DISPLAY_SOURCE);
+    logger_LogError(IDS_DISPLAY3,"");
+    logger_LogError("",common_Format(hr));
     return false;
   }
   return true;
@@ -159,8 +158,8 @@ static RECT display_GetCenteredRect( ) {
 static bool display_RestorePrimary( ) {
   HRESULT hr = display_primary->Restore( );
   if(FAILED(hr)) {
-    logger_LogError("Failed to restore the primary surface.", DISPLAY_SOURCE);
-    logger_LogError(common_Format(hr), DISPLAY_SOURCE);    
+    logger_LogError(IDS_DISPLAY4,"");
+    logger_LogError("",common_Format(hr));    
     return false;
   }
   return true;
@@ -172,8 +171,8 @@ static bool display_RestorePrimary( ) {
 static bool display_RestoreOffscreen( ) {
   HRESULT hr = display_offscreen->Restore( );
   if(FAILED(hr)) {
-    logger_LogError("Failed to restore the offscreen surface.", DISPLAY_SOURCE);
-    logger_LogError(common_Format(hr), DISPLAY_SOURCE);    
+    logger_LogError(IDS_DISPLAY5,"");
+    logger_LogError("",common_Format(hr));    
     return false;
   }
   return true;
@@ -184,19 +183,19 @@ static bool display_RestoreOffscreen( ) {
 // ----------------------------------------------------------------------------
 static bool display_ResetPalette08( ) {
   if(display_ddraw == NULL) {
-    logger_LogError("Direct draw has not been initialized.", DISPLAY_SOURCE);
+    logger_LogError(IDS_DISPLAY6,"");
     return false;
   }  
   if(display_primary == NULL) { 
-    logger_LogError("Direct draw primary surface is invalid.", DISPLAY_SOURCE);
+    logger_LogError(IDS_DISPLAY7,"");
     return false;
   }
   if(display_offscreen == NULL) {
-    logger_LogError("Direct draw offscreen surface is invalid.", DISPLAY_SOURCE);
+    logger_LogError(IDS_DISPLAY8,"");
     return false;
   }
   if(display_palette == NULL) {
-    logger_LogError("Direct draw palette is invalid.", DISPLAY_SOURCE);
+    logger_LogError(IDS_DISPLAY9,"");
     return false;
   }
   
@@ -212,8 +211,8 @@ static bool display_ResetPalette08( ) {
   
   HRESULT hr = display_palette->SetEntries(0, 0, 256, paletteEntry); 
   if(FAILED(hr)) {
-    logger_LogError("Failed to set the palette entries into the palette.", DISPLAY_SOURCE);
-    logger_LogError(common_Format(hr), DISPLAY_SOURCE);
+    logger_LogError(IDS_DISPLAY10,"");
+    logger_LogError("",common_Format(hr));
     return false;
   }
   return true;
@@ -224,7 +223,7 @@ static bool display_ResetPalette08( ) {
 // ----------------------------------------------------------------------------
 static bool display_ResetPalette16( ) {
   if(display_ddraw == NULL) {
-    logger_LogError("Direct draw has not been initialized.", DISPLAY_SOURCE);
+    logger_LogError(IDS_DISPLAY6,"");
     return false;
   }
   
@@ -232,8 +231,8 @@ static bool display_ResetPalette16( ) {
   surfaceDesc.dwSize = sizeof(DDSURFACEDESC);
   HRESULT hr = display_ddraw->GetDisplayMode(&surfaceDesc);
   if(FAILED(hr)) {
-    logger_LogError("Failed to retrieve the display mode.", DISPLAY_SOURCE);
-    logger_LogError(common_Format(hr), DISPLAY_SOURCE);
+    logger_LogError(IDS_DISPLAY11,"");
+    logger_LogError("",common_Format(hr));
     return false;
   }
   
@@ -346,22 +345,22 @@ static void display_ReleaseClipper( ) {
 // ----------------------------------------------------------------------------
 bool display_Initialize(HWND hWnd) {
   if(hWnd == NULL) {
-    logger_LogError("Window handle is invalid.", DISPLAY_SOURCE);
+    logger_LogError(IDS_DISPLAY12,"");
     return false;
   }
 
   HRESULT hr = DirectDrawCreate(NULL, &display_ddraw, NULL);
   if(FAILED(hr) || display_ddraw == NULL) {
-    logger_LogError("Failed to initialize direct draw.", DISPLAY_SOURCE);
-    logger_LogError(common_Format(hr), DISPLAY_SOURCE);
+    logger_LogError(IDS_DISPLAY13,"");
+    logger_LogError("",common_Format(hr));
     return false;
   }
 
   display_modes.clear( );
   hr = display_ddraw->EnumDisplayModes(DDEDM_STANDARDVGAMODES, NULL, NULL, display_EnumerateModes);
   if(FAILED(hr)) {
-    logger_LogError("Failed to enumerate display modes.", DISPLAY_SOURCE);
-    logger_LogError(common_Format(hr), DISPLAY_SOURCE);
+    logger_LogError(IDS_DISPLAY14,"");
+    logger_LogError("",common_Format(hr));
     return false;
   }
 
@@ -378,22 +377,22 @@ bool display_SetFullscreen( ) {
   
   HRESULT hr = DirectDrawCreate(NULL, &display_ddraw, NULL);
   if(FAILED(hr) || display_ddraw == NULL) {
-    logger_LogError("Failed to initialize direct draw.");
-    logger_LogError(common_Format(hr), DISPLAY_SOURCE);
+    logger_LogError(IDS_DISPLAY13,"");
+    logger_LogError("",common_Format(hr));
     return false;
   }
   
   hr = display_ddraw->SetCooperativeLevel(display_hWnd, DDSCL_FULLSCREEN | DDSCL_EXCLUSIVE);
   if(FAILED(hr)) {
-    logger_LogError("Failed to set the cooperative level to fullscreen/exclusive.", DISPLAY_SOURCE);
-    logger_LogError(common_Format(hr), DISPLAY_SOURCE);    
+    logger_LogError(IDS_DISPLAY15,"");
+    logger_LogError("",common_Format(hr));    
     return false;
   }
   
   hr = display_ddraw->SetDisplayMode(display_mode.width, display_mode.height, display_mode.bpp);
   if(FAILED(hr)) {
-    logger_LogError("Failed to set the display mode to " + common_Format(display_mode.width) + "x" + common_Format(display_mode.height) + "x" + common_Format(display_mode.bpp) + ".", DISPLAY_SOURCE);
-    logger_LogError(common_Format(hr), DISPLAY_SOURCE);
+    logger_LogError(IDS_DISPLAY16, common_Format(display_mode.width) + "x" + common_Format(display_mode.height) + "x" + common_Format(display_mode.bpp) + ".");
+    logger_LogError("",common_Format(hr));
     return false;
   }
   
@@ -404,8 +403,8 @@ bool display_SetFullscreen( ) {
     
   hr = display_ddraw->CreateSurface(&primaryDesc, &display_primary, NULL);
   if(FAILED(hr) || display_primary == NULL) {
-    logger_LogError("Failed to create the primary surface.", DISPLAY_SOURCE);
-    logger_LogError(common_Format(hr), DISPLAY_SOURCE);
+    logger_LogError(IDS_DISPLAY17,"");
+    logger_LogError("",common_Format(hr));
     return false;
   }
 
@@ -419,13 +418,13 @@ bool display_SetFullscreen( ) {
     
   hr = display_ddraw->CreateSurface(&offscreenDesc, &display_offscreen, NULL);
   if(FAILED(hr) || display_offscreen == NULL) {
-    logger_LogError("Failed to create the offscreen surface.", DISPLAY_SOURCE);
-    logger_LogError(common_Format(hr), DISPLAY_SOURCE);
+    logger_LogError(IDS_DISPLAY18,"");
+    logger_LogError("",common_Format(hr));
     return false;
   } 
   
   if(!display_SetClipper( )) {
-    logger_LogError("Failed to set the clipper.", DISPLAY_SOURCE);
+    logger_LogError(IDS_DISPLAY19,"");
     return false;
   }
 
@@ -433,21 +432,21 @@ bool display_SetFullscreen( ) {
     PALETTEENTRY paletteEntry[256] = {0};
     hr = display_ddraw->CreatePalette(DDPCAPS_8BIT, paletteEntry, &display_palette, NULL);
     if(FAILED(hr) || display_palette == NULL) {
-      logger_LogError("Failed to create the 8-bit palette.", DISPLAY_SOURCE);
-      logger_LogError(common_Format(hr), DISPLAY_SOURCE);
+      logger_LogError(IDS_DISPLAY20,"");
+      logger_LogError("",common_Format(hr));
       return false;
     }
     hr = display_primary->SetPalette(display_palette);
     if(FAILED(hr)) {
-      logger_LogError("Failed to attach the palette to the primary surface.", DISPLAY_SOURCE);
-      logger_LogError(common_Format(hr), DISPLAY_SOURCE);
+      logger_LogError(IDS_DISPLAY21,"");
+      logger_LogError("",common_Format(hr));
       return false;
     }
   }
   
   display_fullscreen = true;
   if(!display_ResetPalette( )) {
-    logger_LogError("Failed to reset the palette.", DISPLAY_SOURCE);
+    logger_LogError(IDS_DISPLAY22,"");
     return false;
   }
 
@@ -462,15 +461,15 @@ bool display_SetWindowed( ) {
   
   HRESULT hr = DirectDrawCreate(NULL, &display_ddraw, NULL);
   if(FAILED(hr) || display_ddraw == NULL) {
-    logger_LogError("Failed to initialize direct draw.", DISPLAY_SOURCE);
-    logger_LogError(common_Format(hr), DISPLAY_SOURCE);
+    logger_LogError(IDS_DISPLAY13,"");
+    logger_LogError("",common_Format(hr));
     return false;
   }
   
   hr = display_ddraw->SetCooperativeLevel(display_hWnd, DDSCL_NORMAL);
   if(FAILED(hr)) {
-    logger_LogError("Failed to set the cooperative level to normal.", DISPLAY_SOURCE);
-    logger_LogError(common_Format(hr), DISPLAY_SOURCE);    
+    logger_LogError(IDS_DISPLAY23,"");
+    logger_LogError("",common_Format(hr));    
     return false;
   }
 
@@ -481,8 +480,8 @@ bool display_SetWindowed( ) {
     
   hr = display_ddraw->CreateSurface(&primaryDesc, &display_primary, NULL);
   if(FAILED(hr) || display_primary == NULL) {
-    logger_LogError("Failed to create the primary surface.", DISPLAY_SOURCE);
-    logger_LogError(common_Format(hr), DISPLAY_SOURCE);
+    logger_LogError(IDS_DISPLAY17,"");
+    logger_LogError("",common_Format(hr));
     return false;
   }
 
@@ -495,19 +494,19 @@ bool display_SetWindowed( ) {
     
   hr = display_ddraw->CreateSurface(&offscreenDesc, &display_offscreen, NULL);
   if(FAILED(hr) || display_offscreen == NULL) {
-    logger_LogError("Failed to create the offscreen surface.", DISPLAY_SOURCE);
-    logger_LogError(common_Format(hr), DISPLAY_SOURCE);
+    logger_LogError(IDS_DISPLAY24,"");
+    logger_LogError("",common_Format(hr));
     return false;
   } 
   
   if(!display_SetClipper( )) {
-    logger_LogError("Failed to set the clipper.", DISPLAY_SOURCE);
+    logger_LogError(IDS_DISPLAY19,"");
     return false;
   }
   
   display_fullscreen = false;
   if(!display_ResetPalette( )) {
-    logger_LogError("Failed to reset the palette.", DISPLAY_SOURCE);
+    logger_LogError(IDS_DISPLAY22,"");
     return false;
   }
   
@@ -519,15 +518,15 @@ bool display_SetWindowed( ) {
 // ----------------------------------------------------------------------------
 bool display_Show( ) {
   if(display_ddraw == NULL) {
-    logger_LogError("Direct draw has not been initialized.", DISPLAY_SOURCE);
+    logger_LogError(IDS_DISPLAY6,"");
     return false;
   }  
   if(display_offscreen == NULL) {
-    logger_LogError("Direct draw offscreen surface is invalid.", DISPLAY_SOURCE);
+    logger_LogError(IDS_DISPLAY8,"");
     return false;
   }
   if(display_primary == NULL) { 
-    logger_LogError("Direct draw primary surface is invalid.", DISPLAY_SOURCE);
+    logger_LogError(IDS_DISPLAY7,"");
     return false;
   }
   
@@ -538,8 +537,8 @@ bool display_Show( ) {
   offscreenDesc.dwSize = sizeof(DDSURFACEDESC);
   HRESULT hr = display_offscreen->Lock(NULL, &offscreenDesc, DDLOCK_WAIT, NULL);
   if(FAILED(hr)) {
-    logger_LogError("Failed to lock the offscreen surface.", DISPLAY_SOURCE);
-    logger_LogError(common_Format(hr), DISPLAY_SOURCE);
+    logger_LogError(IDS_DISPLAY25,"");
+    logger_LogError("",common_Format(hr));
     if(hr != DDERR_SURFACELOST || !display_RestoreOffscreen( )) {
       return false;
     }
@@ -603,8 +602,8 @@ bool display_Show( ) {
 
   hr = display_offscreen->Unlock(NULL);
   if(FAILED(hr)) {
-    logger_LogError("Failed to unlock the offscreen surface.", DISPLAY_SOURCE);
-    logger_LogError(common_Format(hr), DISPLAY_SOURCE);
+    logger_LogError(IDS_DISPLAY26,"");
+    logger_LogError("",common_Format(hr));
     if(hr != DDERR_SURFACELOST || !display_RestoreOffscreen( )) {
       return false;
     }
@@ -615,8 +614,8 @@ bool display_Show( ) {
   
   hr = display_primary->Blt(&targetRect, display_offscreen, &sourceRect, DDBLT_WAIT, NULL);
   if(FAILED(hr)) {
-    logger_LogError("Failed to blit the offscreen surface data to the primary surface.", DISPLAY_SOURCE);
-    logger_LogError(common_Format(hr), DISPLAY_SOURCE);  
+    logger_LogError(IDS_DISPLAY27,"");
+    logger_LogError("",common_Format(hr));  
     if(hr != DDERR_SURFACELOST || !display_RestorePrimary( )) {
       return false;
     }
@@ -632,11 +631,11 @@ bool display_ResetPalette( ) {
   display_ResetPalette24( );
   display_ResetPalette32( );
   if(!display_ResetPalette16( )) {
-    logger_LogError("Failed to reset the palette for 16 bit per pixel modes.", DISPLAY_SOURCE);
+    logger_LogError(IDS_DISPLAY28,"");
     return false;
   }
   if(display_fullscreen && !display_ResetPalette08( )) {
-    logger_LogError("Failed to reset the palette for 8 bit per pixel modes.", DISPLAY_SOURCE);
+    logger_LogError(IDS_DISPLAY29,"");
     return false;
   }
   return true;
@@ -647,7 +646,7 @@ bool display_ResetPalette( ) {
 // ----------------------------------------------------------------------------
 bool display_TakeScreenshot(std::string filename) {
   if(filename.empty( ) || filename.length == 0) {
-    logger_LogError("Screenshot filename is invalid.", DISPLAY_SOURCE);
+    logger_LogError(IDS_DISPLAY30,"");
     return false;
   }
 
@@ -667,7 +666,7 @@ bool display_TakeScreenshot(std::string filename) {
   
   FILE* file = fopen(filename.c_str( ), "wb");
   if(file == NULL) {
-    logger_LogError("Failed to open the screenshot file " + filename + " for writing.", DISPLAY_SOURCE);
+    logger_LogError(IDS_DISPLAY31, filename);
     return false;
   }
 
@@ -694,15 +693,15 @@ bool display_TakeScreenshot(std::string filename) {
 // ----------------------------------------------------------------------------
 bool display_Clear( ) {
   if(display_ddraw == NULL) {
-    logger_LogError("Direct draw has not been initialized.", DISPLAY_SOURCE);
+    logger_LogError(IDS_DISPLAY6,"");
     return false;
   }  
   if(display_offscreen == NULL) {
-    logger_LogError("Direct draw offscreen surface is invalid.", DISPLAY_SOURCE);
+    logger_LogError(IDS_DISPLAY8,"");
     return false;
   }
   if(display_primary == NULL) { 
-    logger_LogError("Direct draw primary surface is invalid.", DISPLAY_SOURCE);
+    logger_LogError(IDS_DISPLAY7,"");
     return false;
   }
  
@@ -712,15 +711,15 @@ bool display_Clear( ) {
 
   HRESULT hr = display_offscreen->Blt(NULL, NULL, NULL, DDBLT_COLORFILL, &bltFx);
   if(FAILED(hr)) {
-    logger_LogError("Failed to perform clear on offscreen surface.", DISPLAY_SOURCE);
-    logger_LogError(common_Format(hr), DISPLAY_SOURCE);    
+    logger_LogError(IDS_DISPLAY32,"");
+    logger_LogError("",common_Format(hr));    
     return false;
   }
   
   hr = display_primary->Blt(NULL, NULL, NULL, DDBLT_COLORFILL, &bltFx);
   if(FAILED(hr)) {
-    logger_LogError("Failed to perform clear on primary surface.", DISPLAY_SOURCE);
-    logger_LogError(common_Format(hr), DISPLAY_SOURCE);
+    logger_LogError(IDS_DISPLAY33,"");
+    logger_LogError("",common_Format(hr));
     return false;
   }
   

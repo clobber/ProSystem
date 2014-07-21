@@ -46,5 +46,8 @@ extern void menu_Refresh( );
 extern void menu_SetEnabled(bool enabled);
 extern bool menu_IsEnabled( );
 extern HACCEL menu_hAccel;
+extern bool screenshot1;
+extern bool screenshot2;
+
 
 #endif

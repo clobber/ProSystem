@@ -23,7 +23,6 @@
 // Menu.cpp
 // ----------------------------------------------------------------------------
 #include "Menu.h"
-#define MENU_SOURCE "Menu.cpp"
 
 HACCEL menu_hAccel = NULL;
 
@@ -32,6 +31,7 @@ static HMENU menu_hFileMenu = NULL;
 static HMENU menu_hOptionsMenu = NULL;
 static HMENU menu_hRecentMenu = NULL;
 static HMENU menu_hDisplayMenu = NULL;
+static HMENU menu_hScreenshotMenu = NULL;
 static HMENU menu_hModesMenu = NULL;
 static HMENU menu_hSoundMenu = NULL;
 static HMENU menu_hSampleRateMenu = NULL;
@@ -47,6 +47,10 @@ static HWND menu_hWnd = NULL;
 // RefreshDisplayMenu
 // ----------------------------------------------------------------------------
 static void menu_RefreshDisplayMenu( ) {
+//Leonis
+  CheckMenuItem(menu_hScreenshotMenu, 0, MF_BYPOSITION | ((screenshot1)? MF_CHECKED: MF_UNCHECKED));
+  CheckMenuItem(menu_hScreenshotMenu, 1, MF_BYPOSITION | ((screenshot2)? MF_CHECKED: MF_UNCHECKED));
+
   CheckMenuItem(menu_hDisplayMenu, 0, MF_BYPOSITION | MF_UNCHECKED);  
   CheckMenuItem(menu_hDisplayMenu, 2, MF_BYPOSITION | MF_UNCHECKED);
   CheckMenuItem(menu_hDisplayMenu, 5, MF_BYPOSITION | MF_UNCHECKED);
@@ -136,6 +140,7 @@ static void menu_RefreshSoundMenu( ) {
   CheckMenuItem(menu_hSampleRateMenu, 3, MF_BYPOSITION | MF_UNCHECKED);
   CheckMenuItem(menu_hSampleRateMenu, 4, MF_BYPOSITION | MF_UNCHECKED);
   CheckMenuItem(menu_hSampleRateMenu, 5, MF_BYPOSITION | MF_UNCHECKED);
+
   switch(sound_GetSampleRate( )) {
     case 11025:
       CheckMenuItem(menu_hSampleRateMenu, 0, MF_BYPOSITION | MF_CHECKED);
@@ -254,108 +259,114 @@ void menu_RefreshFileMenu( ) {
 // ----------------------------------------------------------------------------
 bool menu_Initialize(HWND hWnd, HINSTANCE hInstance) {
   if(hWnd == NULL) {
-    logger_LogError("Handle to the window is invalid.", MENU_SOURCE);
+    logger_LogError(IDS_INPUT1,"");
   }
   if(hInstance == NULL) {
-    logger_LogError("Handle to the application instance is invalid.", MENU_SOURCE);
+    logger_LogError(IDS_INPUT2,"");
     return false;
   }
   
   menu_hMenu = LoadMenu(hInstance, MAKEINTRESOURCE(IDR_MENU_MAIN));
   if(menu_hMenu == NULL) {
-    logger_LogError("Failed to load the menu resource.", MENU_SOURCE);
-    logger_LogError(common_GetErrorMessage( ), MENU_SOURCE);
+    logger_LogError(IDS_MENU2,"");
+    logger_LogError("",common_GetErrorMessage( ));
     return false;
   }
   
   if(!SetMenu(hWnd, menu_hMenu)) {
-    logger_LogError("Failed to attach the menu to the console.", MENU_SOURCE);
-    logger_LogError(common_GetErrorMessage( ), MENU_SOURCE);
+    logger_LogError(IDS_MENU3,"");
+    logger_LogError("",common_GetErrorMessage( ));
     return false;
   }
   
   menu_hAccel = LoadAccelerators(hInstance, MAKEINTRESOURCE(IDR_ACCELERATOR));
   if(menu_hAccel == NULL) {
-    logger_LogError("Failed to load the menu accelerator resource.", MENU_SOURCE);
-    logger_LogError(common_GetErrorMessage( ), MENU_SOURCE);
+    logger_LogError(IDS_MENU4,"");
+    logger_LogError("",common_GetErrorMessage( ));
     return false;
   }
 
   menu_hFileMenu = GetSubMenu(menu_hMenu, 0);
   if(menu_hFileMenu == NULL) {
-    logger_LogError("Failed to retrieve a handle to the file menu.", MENU_SOURCE);
+    logger_LogError(IDS_MENU5,"");
     return false;
   }     
   
   menu_hRecentMenu = GetSubMenu(menu_hFileMenu, 2);
   if(menu_hRecentMenu == NULL) {
-    logger_LogError("Failed to retrieve a handle to the recent menu.", MENU_SOURCE);
+    logger_LogError(IDS_MENU6,"");
     return false;
   }
   
   menu_hOptionsMenu = GetSubMenu(menu_hMenu, 1);
   if(menu_hOptionsMenu == NULL) {
-    logger_LogError("Failed to retrieve a handle to the opetions menu.", MENU_SOURCE);
+    logger_LogError(IDS_MENU7,"");
     return false;
   }
   
   menu_hDisplayMenu = GetSubMenu(menu_hOptionsMenu, 3);
   if(menu_hDisplayMenu == NULL) {
-    logger_LogError("Failed to retrieve a handle to the display menu.", MENU_SOURCE);
+    logger_LogError(IDS_MENU8,"");
+    return false;
+  }
+
+  menu_hScreenshotMenu = GetSubMenu(menu_hDisplayMenu, 10);
+  if(menu_hScreenshotMenu == NULL) {
+    logger_LogError(IDS_MENU8,"");
     return false;
   }
   
   menu_hModesMenu = GetSubMenu(menu_hDisplayMenu, 1);
   if(menu_hModesMenu == NULL) {
-    logger_LogError("Failed to retrieve a handle to the modes menu.", MENU_SOURCE);
+    logger_LogError(IDS_MENU9,"");
     return false;
   }
   
   menu_hSoundMenu = GetSubMenu(menu_hOptionsMenu, 4);
   if(menu_hSoundMenu == NULL) {
-    logger_LogError("Failed to retrieve a handle to the sound menu.", MENU_SOURCE);
+    logger_LogError(IDS_MENU10,"");
     return false;
   }
   
   menu_hSampleRateMenu = GetSubMenu(menu_hSoundMenu, 2);
   if(menu_hSampleRateMenu == NULL) {
-    logger_LogError("Failed to retrieve a handle to the sample rate menu.", MENU_SOURCE);
+    logger_LogError(IDS_MENU11,"");
     return false;
   }
   
   menu_hLatencyMenu = GetSubMenu(menu_hSoundMenu, 3);
   if(menu_hLatencyMenu == NULL) {
-    logger_LogError("Failed to retrieve a handle to the latency menu.", MENU_SOURCE);
+    logger_LogError(IDS_MENU11,"");
     return false;
   }
   
   menu_hEmulationMenu = GetSubMenu(menu_hOptionsMenu, 5);
   if(menu_hEmulationMenu == NULL) {
-    logger_LogError("Failed to retrieve a handle to the emulation menu.", MENU_SOURCE);
+    logger_LogError(IDS_MENU12,"");
     return false;
   }
   
   menu_hRegionsMenu = GetSubMenu(menu_hEmulationMenu, 0);
   if(menu_hRegionsMenu == NULL) {
-    logger_LogError("Failed to retrieve a handle to the regions menu.", MENU_SOURCE);
+    logger_LogError(IDS_MENU13,"");
     return false;
   }
   
   menu_hFrameSkipMenu = GetSubMenu(menu_hEmulationMenu, 1);
   if(menu_hFrameSkipMenu == NULL) {
-    logger_LogError("Failed to retrieve a handle to the frame skip menu.", MENU_SOURCE);
+    logger_LogError(IDS_MENU14,"");
     return false;
   }
 
   menu_hInputMenu = GetSubMenu(menu_hOptionsMenu, 6);
   if(menu_hInputMenu == NULL) {
-    logger_LogError("Failed to retrieve a handle to the input menu.", MENU_SOURCE);
+    logger_LogError(IDS_MENU15,"");
     return false;  
   }
   
   menu_hHelpMenu = GetSubMenu(menu_hMenu, 2);
   if(menu_hHelpMenu == NULL) {
-    logger_LogError("Failed to retrieve a handle to the help menu.", MENU_SOURCE);
+    logger_LogError(IDS_MENU16,"");
     return false;
   }
 

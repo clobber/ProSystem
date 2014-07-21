@@ -41,6 +41,7 @@ extern std::string common_Format(bool value);
 extern std::string common_Format(HRESULT result);
 extern std::string common_Trim(std::string target);
 extern std::string common_Remove(std::string target, char value);
+extern std::string common_Replace(std::string target, char value1, char value2);
 extern std::string common_GetErrorMessage( );
 extern std::string common_GetErrorMessage(DWORD error);
 extern std::string common_GetExtension(std::string filename);

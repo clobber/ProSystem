@@ -23,7 +23,6 @@
 // Sound.cpp
 // ----------------------------------------------------------------------------
 #include "Sound.h"
-#define SOUND_SOURCE "Sound.cpp"
 #define SOUND_LATENCY_SCALE 4
 
 byte sound_latency = SOUND_LATENCY_VERY_LOW;
@@ -75,8 +74,8 @@ static bool sound_RestoreBuffer( ) {
   if(sound_buffer != NULL) {
     HRESULT hr = sound_buffer->Restore( );
     if(FAILED(hr)) {
-      logger_LogError("Failed to restore the sound buffer.", SOUND_SOURCE);
-      logger_LogError(common_Format(hr), SOUND_SOURCE);
+      logger_LogError(IDS_SOUND1,"");
+      logger_LogError("",common_Format(hr));
       return false;
     }
   }
@@ -91,8 +90,8 @@ static bool sound_ReleaseBuffer(LPDIRECTSOUNDBUFFER buffer) {
     HRESULT hr = buffer->Release( );
     sound_buffer = NULL;
     if(FAILED(hr)) {
-      logger_LogError("Failed to release the sound buffer.", SOUND_SOURCE);
-      logger_LogError(common_Format(hr), SOUND_SOURCE);
+      logger_LogError(IDS_SOUND2,"");
+      logger_LogError("",common_Format(hr));
       return false;
     }
   }
@@ -107,8 +106,8 @@ static bool sound_ReleaseSound( ) {
     HRESULT hr = sound_dsound->Release( );
     sound_dsound = NULL;
     if(FAILED(hr)) {
-      logger_LogError("Failed to release direct sound.", SOUND_SOURCE);
-      logger_LogError(common_Format(hr), SOUND_SOURCE);
+      logger_LogError(IDS_SOUND3,"");
+      logger_LogError("",common_Format(hr));
       return false;
     }
   }
@@ -120,21 +119,21 @@ static bool sound_ReleaseSound( ) {
 // ----------------------------------------------------------------------------
 bool sound_Initialize(HWND hWnd) {
   if(hWnd == NULL) {
-    logger_LogError("Handle to window is invalid.", SOUND_SOURCE);
+    logger_LogError(IDS_INPUT1,"");
     return false;
   }
   
   HRESULT hr = DirectSoundCreate(NULL, &sound_dsound, NULL);
   if(FAILED(hr) || sound_dsound == NULL) {
-    logger_LogError("Failed to initialize direct sound.", SOUND_SOURCE);
-    logger_LogError(common_Format(hr), SOUND_SOURCE);
+    logger_LogError(IDS_SOUND4,"");
+    logger_LogError("",common_Format(hr));
     return false;
   }
   
   hr = sound_dsound->SetCooperativeLevel(hWnd, DSSCL_PRIORITY);
   if(FAILED(hr)) {
-    logger_LogError("Failed to set the cooperative level.", SOUND_SOURCE);
-    logger_LogError(common_Format(hr), SOUND_SOURCE);
+    logger_LogError(IDS_INPUT6,"");
+    logger_LogError("",common_Format(hr));
     return false;
   }
   
@@ -147,16 +146,18 @@ bool sound_Initialize(HWND hWnd) {
   
   hr = sound_dsound->CreateSoundBuffer(&primaryDesc, &sound_primaryBuffer, NULL);
   if(FAILED(hr) || sound_primaryBuffer == NULL) {
-    logger_LogError("Failed to create the primary sound buffer.", SOUND_SOURCE);  
-    logger_LogError(common_Format(hr), SOUND_SOURCE);
+    logger_LogError(IDS_SOUND5,"");  
+    logger_LogError("",common_Format(hr));
     return false;
   }
 
   if(!sound_SetFormat(SOUND_DEFAULT_FORMAT)) {
-    logger_LogError("Failed to set the default format.", SOUND_SOURCE);
+    logger_LogError(IDS_SOUND6,"");
     return false;
   }
 
+//Leonis
+sound_SetSampleRate(samplerate);
   return true;
 }
 
@@ -165,18 +166,18 @@ bool sound_Initialize(HWND hWnd) {
 // ----------------------------------------------------------------------------
 bool sound_SetFormat(WAVEFORMATEX format) {
   if(sound_dsound == NULL) {
-    logger_LogError("Direct sound has not been initialized.", SOUND_SOURCE);
+    logger_LogError(IDS_SOUND7,"");
     return false;
   }
   if(sound_primaryBuffer == NULL) {
-    logger_LogError("Direct sound primary buffer has not been initialized.", SOUND_SOURCE);
+    logger_LogError(IDS_SOUND8,"");
     return false;
   }
   
   HRESULT hr = sound_primaryBuffer->SetFormat(&format);
   if(FAILED(hr)) {
-    logger_LogError("Failed to set the primary sound buffer's format.");
-    logger_LogError(common_Format(hr), SOUND_SOURCE);    
+    logger_LogError(IDS_SOUND9,"");
+    logger_LogError("",common_Format(hr));    
     return false;
   }
   
@@ -189,8 +190,8 @@ bool sound_SetFormat(WAVEFORMATEX format) {
   
   hr = sound_dsound->CreateSoundBuffer(&secondaryDesc, &sound_buffer, NULL);
   if(FAILED(hr) || sound_buffer == NULL) {
-    logger_LogError("Failed to create the sound buffer.");
-    logger_LogError(common_Format(hr), SOUND_SOURCE);
+    logger_LogError(IDS_SOUND10,"");
+    logger_LogError("",common_Format(hr));
     return false;
   }    
 
@@ -203,15 +204,15 @@ bool sound_SetFormat(WAVEFORMATEX format) {
 // ----------------------------------------------------------------------------
 bool sound_Store( ) {
   if(sound_dsound == NULL) {
-    logger_LogError("Direct sound has not been initialized.", SOUND_SOURCE);
+    logger_LogError(IDS_SOUND7,"");
     return false;
   }
   if(sound_primaryBuffer == NULL) {
-    logger_LogError("Direct sound primary buffer has not been initialized.", SOUND_SOURCE);
+    logger_LogError(IDS_SOUND8,"");
     return false;
   }
   if(sound_buffer == NULL) {
-    logger_LogError("Direct sound buffer has not been initialized.", SOUND_SOURCE);
+    logger_LogError(IDS_SOUND11,"");
     return false;
   }
     
@@ -235,8 +236,8 @@ bool sound_Store( ) {
   
   HRESULT hr = sound_buffer->Lock(sound_counter, length, (void**)&lockStream, &lockCount, (void**)&wrapStream, &wrapCount, 0);
   if(FAILED(hr) || lockStream == NULL) {
-    logger_LogError("Failed to lock the sound buffer.", SOUND_SOURCE);
-    logger_LogError(common_Format(hr), SOUND_SOURCE);
+    logger_LogError(IDS_SOUND12,"");
+    logger_LogError("",common_Format(hr));
     if(hr != DSERR_BUFFERLOST || !sound_RestoreBuffer( )) {
       return false;
     }
@@ -253,8 +254,8 @@ bool sound_Store( ) {
   
   hr = sound_buffer->Unlock(lockStream, lockCount, wrapStream, wrapCount);
   if(FAILED(hr)) {
-    logger_LogError("Failed to unlock the sound buffer.", SOUND_SOURCE);
-    logger_LogError(common_Format(hr), SOUND_SOURCE);
+    logger_LogError(IDS_SOUND13,"");
+    logger_LogError("",common_Format(hr));
     if(hr != DSERR_BUFFERLOST || !sound_RestoreBuffer( )) {
       return false;
     }
@@ -273,15 +274,15 @@ bool sound_Store( ) {
 // ----------------------------------------------------------------------------
 bool sound_Clear( ) {
   if(sound_dsound == NULL) {
-    logger_LogError("Direct sound has not been initialized.", SOUND_SOURCE);
+    logger_LogError(IDS_SOUND7,"");
     return false;
   }
   if(sound_primaryBuffer == NULL) {
-    logger_LogError("Direct sound primary buffer has not been initialized.", SOUND_SOURCE);
+    logger_LogError(IDS_SOUND8,"");
     return false;
   }
   if(sound_buffer == NULL) {
-    logger_LogError("Direct sound buffer has not been initialized.", SOUND_SOURCE);
+    logger_LogError(IDS_SOUND11,"");
     return false;
   }
 
@@ -289,8 +290,8 @@ bool sound_Clear( ) {
   DWORD lockCount = 0;
   HRESULT hr = sound_buffer->Lock(0, sound_format.nSamplesPerSec, (void**)&lockStream, &lockCount, NULL, NULL, DSBLOCK_ENTIREBUFFER);
   if(FAILED(hr) || lockStream == NULL) {
-    logger_LogError("Failed to lock the sound buffer.", SOUND_SOURCE);
-    logger_LogError(common_Format(hr), SOUND_SOURCE);
+    logger_LogError(IDS_SOUND12,"");
+    logger_LogError("",common_Format(hr));
     if(hr != DSERR_BUFFERLOST || !sound_RestoreBuffer( )) {
       return false;
     }
@@ -302,8 +303,8 @@ bool sound_Clear( ) {
 
   hr = sound_buffer->Unlock(lockStream, lockCount, NULL, NULL);
   if(FAILED(hr)) {
-    logger_LogError("Failed to unlock the sound buffer.", SOUND_SOURCE);
-    logger_LogError(common_Format(hr), SOUND_SOURCE);
+    logger_LogError(IDS_SOUND13,"");
+    logger_LogError("",common_Format(hr));
     if(hr != DSERR_BUFFERLOST || !sound_RestoreBuffer( )) {
       return false;
     }
@@ -317,30 +318,30 @@ bool sound_Clear( ) {
 // ----------------------------------------------------------------------------
 bool sound_Play( ) {
   if(sound_dsound == NULL) {
-    logger_LogError("Direct sound has not been initialized.", SOUND_SOURCE);
+    logger_LogError(IDS_SOUND7,"");
     return false;
   }
   if(sound_primaryBuffer == NULL) {
-    logger_LogError("Direct sound primary buffer has not been initialized.", SOUND_SOURCE);
+    logger_LogError(IDS_SOUND8,"");
     return false;
   }
   if(sound_buffer == NULL) {
-    logger_LogError("Direct sound buffer has not been initialized.", SOUND_SOURCE);
+    logger_LogError(IDS_SOUND11,"");
     return false;
   }
 
   if(!sound_muted) {
     HRESULT hr = sound_buffer->SetCurrentPosition(0);
     if(FAILED(hr)) {
-      logger_LogError("Failed to reset the position of the sound pointer in the sound buffer.", SOUND_SOURCE);
-      logger_LogError(common_Format(hr), SOUND_SOURCE);
+      logger_LogError(IDS_SOUND14,"");
+      logger_LogError("",common_Format(hr));
       return false;
     }
   
     hr = sound_buffer->Play(0, 0, DSBPLAY_LOOPING);
     if(FAILED(hr)) {
-      logger_LogError("Failed to start playing the sound buffer.", SOUND_SOURCE);
-      logger_LogError(common_Format(hr), SOUND_SOURCE);
+      logger_LogError(IDS_SOUND15,"");
+      logger_LogError("",common_Format(hr));
       if(hr != DSERR_BUFFERLOST || !sound_RestoreBuffer( )) {
         return false;
       }    
@@ -355,22 +356,22 @@ bool sound_Play( ) {
 // ----------------------------------------------------------------------------
 bool sound_Stop( ) {
   if(sound_dsound == NULL) {
-    logger_LogError("Direct sound has not been initialized.", SOUND_SOURCE);
+    logger_LogError(IDS_SOUND7,"");
     return false;
   }
   if(sound_primaryBuffer == NULL) {
-    logger_LogError("Direct sound primary buffer has not been initialized.", SOUND_SOURCE);
+    logger_LogError(IDS_SOUND8,"");
     return false;
   }
   if(sound_buffer == NULL) {
-    logger_LogError("Direct sound buffer has not been initialized.", SOUND_SOURCE);
+    logger_LogError(IDS_SOUND11,"");
     return false;
   }
   
   HRESULT hr = sound_buffer->Stop( );
   if(FAILED(hr)) {
-    logger_LogError("Failed to stop the sound buffer.", SOUND_SOURCE);
-    logger_LogError(common_Format(hr), SOUND_SOURCE);
+    logger_LogError(IDS_SOUND16,"");
+    logger_LogError("",common_Format(hr));
     if(hr != DSERR_BUFFERLOST || !sound_RestoreBuffer( )) {
       return false;
     }

@@ -32,6 +32,9 @@
 #include <Stdio.h>
 #include <String>
 #include <Time.h>
+#include "Windows.h"
+#include "Resource.h"
+
 
 typedef unsigned char byte;
 typedef unsigned short word;
@@ -39,12 +42,12 @@ typedef unsigned int uint;
 
 extern bool logger_Initialize( );
 extern bool logger_Initialize(std::string filename);
-extern void logger_LogError(std::string message);
 extern void logger_LogError(std::string message, std::string source);
-extern void logger_LogInfo(std::string message);
+extern void logger_LogError(int message, std::string source);
 extern void logger_LogInfo(std::string message, std::string source);
-extern void logger_LogDebug(std::string message);
+extern void logger_LogInfo(int message, std::string source);
 extern void logger_LogDebug(std::string message, std::string source);
+extern void logger_LogDebug(int, std::string source);
 extern void logger_Release( );
 extern byte logger_level;
 

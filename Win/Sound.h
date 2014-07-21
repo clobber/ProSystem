@@ -36,6 +36,7 @@
 #include "Common.h"
 #include "Logger.h"
 #include "ProSystem.h"
+#include "Configuration.h"
 #include "Tia.h"
 #include "Pokey.h"
 

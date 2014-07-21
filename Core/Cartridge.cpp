@@ -23,7 +23,6 @@
 // Cartridge.cpp
 // ----------------------------------------------------------------------------
 #include "Cartridge.h"
-#define CARTRIDGE_SOURCE "Cartridge.cpp"
 
 std::string cartridge_title;
 std::string cartridge_description;
@@ -48,6 +47,19 @@ static bool cartridge_HasHeader(const byte* header) {
   const char HEADER_ID[ ] = {"ATARI7800"};
   for(int index = 0; index < 9; index++) {
     if(HEADER_ID[index] != header[index + 1]) {
+      return false;
+    }
+  }
+  return true;
+}
+
+// ----------------------------------------------------------------------------
+// Header for CC2 hack
+// ----------------------------------------------------------------------------
+static bool cartridge_CC2(const byte* header) {
+  const char HEADER_ID[ ] = {">>"};
+  for(int index = 0; index < 2; index++) {
+    if(HEADER_ID[index] != header[index+1]) {
       return false;
     }
   }
@@ -128,7 +140,7 @@ static void cartridge_ReadHeader(const byte* header) {
 // ----------------------------------------------------------------------------
 static bool cartridge_Load(const byte* data, uint size) {
   if(size <= 128) {
-    logger_LogError("Cartridge data is invalid.", CARTRIDGE_SOURCE);
+    logger_LogError(IDS_CARTRIDGE1,"");
     return false;
   }
 
@@ -137,6 +149,11 @@ static bool cartridge_Load(const byte* data, uint size) {
   byte header[128] = {0};
   for(int index = 0; index < 128; index++) {
     header[index] = data[index];
+  }
+
+if (cartridge_CC2(header)) {
+    logger_LogError(IDS_CARTRIDGE9,"");
+    return false;
   }
 
   uint offset = 0;
@@ -155,6 +172,7 @@ static bool cartridge_Load(const byte* data, uint size) {
   }
   
   cartridge_digest = hash_Compute(cartridge_buffer, cartridge_size);
+  
   return true;
 }
 
@@ -163,38 +181,38 @@ static bool cartridge_Load(const byte* data, uint size) {
 // ----------------------------------------------------------------------------
 bool cartridge_Load(std::string filename) {
   if(filename.empty( ) || filename.length( ) == 0) {
-    logger_LogError("Cartridge filename is invalid.", CARTRIDGE_SOURCE);
+    logger_LogError(IDS_CARTRIDGE2,"");
     return false;
   }
   
   cartridge_Release( );
-  logger_LogInfo("Opening cartridge file " + filename + ".");
+  logger_LogInfo(IDS_CARTRIDGE8,filename);
   
   byte* data = NULL;
   uint size = archive_GetUncompressedFileSize(filename);
   if(size == 0) {
     FILE *file = fopen(filename.c_str( ), "rb");
     if(file == NULL) {
-      logger_LogError("Failed to open the cartridge file " + filename + " for reading.", CARTRIDGE_SOURCE);
+      logger_LogError(IDS_CARTRIDGE3, filename);
       return false;  
     }
 
     if(fseek(file, 0, SEEK_END)) {
       fclose(file);
-      logger_LogError("Failed to find the end of the cartridge file.", CARTRIDGE_SOURCE);
+      logger_LogError(IDS_CARTRIDGE4,"");
       return false;
     }
     size = ftell(file);
     if(fseek(file, 0, SEEK_SET)) {
       fclose(file);
-      logger_LogError("Failed to find the size of the cartridge file.", CARTRIDGE_SOURCE);
+      logger_LogError(IDS_CARTRIDGE5,"");
       return false;
     }
   
     data = new byte[size];
     if(fread(data, 1, size, file) != size && ferror(file)) {
       fclose(file);
-      logger_LogError("Failed to read the cartridge data.", CARTRIDGE_SOURCE);
+      logger_LogError(IDS_CARTRIDGE6,"");
       cartridge_Release( );
       delete [ ] data;
       return false;
@@ -208,7 +226,7 @@ bool cartridge_Load(std::string filename) {
   }
   
   if(!cartridge_Load(data, size)) {
-    logger_LogError("Failed to load the cartridge data into memory.", CARTRIDGE_SOURCE);
+    logger_LogError(IDS_CARTRIDGE7,"");
     delete [ ] data;
     return false;
   }

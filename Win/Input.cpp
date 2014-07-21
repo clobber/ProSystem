@@ -25,7 +25,6 @@
 #include <dinput.h> 
 #include "Input.h"
 #include "Console.h"
-#define INPUT_SOURCE "Input.cpp"
 #define INPUT_KEY_SIZE 100
 #define INPUT_JOY_SIZE 20
 
@@ -831,45 +830,45 @@ BOOL CALLBACK InitJoysticksCallback(const DIDEVICEINSTANCE*
 // ----------------------------------------------------------------------------
 bool input_Initialize(HWND hWnd, HINSTANCE hInstance) {
   if(hWnd == NULL) {
-    logger_LogError("Handle to the window is invalid.", INPUT_SOURCE);
+    logger_LogError(IDS_INPUT1,"");
   }
   if(hInstance == NULL) {
-    logger_LogError("Handle to the application instance is invalid.", INPUT_SOURCE);
+    logger_LogError(IDS_INPUT2,"");
     return false;
   }
   
   HRESULT hr = DirectInputCreate(hInstance, DIRECTINPUT_VERSION, &input_dinput, NULL);
   if(FAILED(hr) || input_dinput == NULL) {
-    logger_LogError("Failed to initialize direct input.", INPUT_SOURCE);
-    logger_LogError(common_Format(hr), INPUT_SOURCE);
+    logger_LogError(IDS_INPUT3,"");
+    logger_LogError("",common_Format(hr));
     return false;  
   }
   
   hr = input_dinput->CreateDevice(GUID_SysKeyboard, &input_keyboard, NULL);
   if(FAILED(hr) || input_keyboard == NULL) {
-    logger_LogError("Failed to create the keyboard device.", INPUT_SOURCE);
-    logger_LogError(common_Format(hr), INPUT_SOURCE);    
+    logger_LogError(IDS_INPUT4,"");
+    logger_LogError("",common_Format(hr));    
     return false;
   }
   
   hr = input_keyboard->SetDataFormat(&c_dfDIKeyboard);
   if(FAILED(hr)) {
-    logger_LogError("Failed to set the keyboard format.", INPUT_SOURCE);
-    logger_LogError(common_Format(hr), INPUT_SOURCE);    
+    logger_LogError(IDS_INPUT5,"");
+    logger_LogError("",common_Format(hr));    
     return false;
   }
   
   hr = input_keyboard->SetCooperativeLevel(hWnd, DISCL_BACKGROUND | DISCL_NONEXCLUSIVE);
   if(FAILED(hr)) {
-    logger_LogError("Failed to set the cooperative level.", INPUT_SOURCE);
-    logger_LogError(common_Format(hr), INPUT_SOURCE);
+    logger_LogError(IDS_INPUT6,"");
+    logger_LogError("",common_Format(hr));
     return false;
   }
   
   hr = input_keyboard->Acquire( );
   if(FAILED(hr)) {
-    logger_LogError("Failed to aquire the keyboard.", INPUT_SOURCE);
-    logger_LogError(common_Format(hr), INPUT_SOURCE);
+    logger_LogError(IDS_INPUT7,"");
+    logger_LogError("",common_Format(hr));
     return false;
   }
 
@@ -894,23 +893,23 @@ bool input_GetKeyboardState(byte* input) {
   user_go[1] = 0;
 
   if(input_dinput == NULL) {
-    logger_LogError("Direct input has not been initialized.", INPUT_SOURCE);
+    logger_LogError(IDS_INPUT8,"");
     return false;
   }
   if(input_keyboard == NULL) {
-    logger_LogError("Direct input keyboard has not been initialized.", INPUT_SOURCE);
+    logger_LogError(IDS_INPUT9,"");
     return false;
   }
   if(input == NULL) {
-    logger_LogError("Keyboard input buffer is invalid.", INPUT_SOURCE);
+    logger_LogError(IDS_INPUT10,"");
     return false;
   }
   
   byte keyboard[256];
   HRESULT hr = input_keyboard->GetDeviceState(256, keyboard);
   if(FAILED(hr)) {
-    logger_LogError("Failed to retrieve the keyboard state.", INPUT_SOURCE);
-    logger_LogError(common_Format(hr), INPUT_SOURCE);
+    logger_LogError(IDS_INPUT11,"");
+    logger_LogError("",common_Format(hr));
     return false;
   }
 
@@ -961,8 +960,8 @@ bool input_GetKeyboardState(byte* input) {
     }
     hr = input_joystick[i]->GetDeviceState(sizeof(DIJOYSTATE), &js);
     if(FAILED(hr)) {
-      logger_LogError("Failed to retrieve the joystick state.", INPUT_SOURCE);
-      logger_LogError(common_Format(hr), INPUT_SOURCE);
+      logger_LogError(IDS_INPUT12,"");
+      logger_LogError("",common_Format(hr));
       continue;
     }
 

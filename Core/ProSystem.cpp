@@ -23,7 +23,6 @@
 // ProSystem.cpp
 // ----------------------------------------------------------------------------
 #include "ProSystem.h"
-#define PRO_SYSTEM_SOURCE "ProSystem.cpp"
 #define PRO_SYSTEM_STATE_HEADER "PRO-SYSTEM STATE"
 
 bool prosystem_active = false;
@@ -122,11 +121,11 @@ void prosystem_ExecuteFrame(const byte* input) {
 // ----------------------------------------------------------------------------
 bool prosystem_Save(std::string filename, bool compress) {
   if(filename.empty( ) || filename.length( ) == 0) {
-    logger_LogError("Filename is invalid.", PRO_SYSTEM_SOURCE);
+    logger_LogError(IDS_PROSYSTEM1,"");
     return false;
   }
 
-  logger_LogInfo("Saving game state to file " + filename + ".");
+  logger_LogInfo(IDS_PROSYSTEM2,filename);
   
   byte buffer[32829] = {0};
   uint size = 0;
@@ -172,13 +171,13 @@ bool prosystem_Save(std::string filename, bool compress) {
   if(!compress) {
     FILE* file = fopen(filename.c_str( ), "wb");
     if(file == NULL) {
-      logger_LogError("Failed to open the file " + filename + " for writing.", PRO_SYSTEM_SOURCE);
+      logger_LogError(IDS_PROSYSTEM3,filename);
       return false;
     }
   
     if(fwrite(buffer, 1, size, file) != size) {
       fclose(file);
-      logger_LogError("Failed to write the save state data to the file " + filename + ".", PRO_SYSTEM_SOURCE);
+      logger_LogError(IDS_PROSYSTEM4,filename);
       return false;
     }
   
@@ -186,7 +185,7 @@ bool prosystem_Save(std::string filename, bool compress) {
   }
   else {
     if(!archive_Compress(filename.c_str( ), "Save.sav", buffer, size)) {
-      logger_LogError("Failed to compress the save state data to the file " + filename + ".", PRO_SYSTEM_SOURCE);
+      logger_LogError(IDS_PROSYSTEM5, filename);
       return false;
     }
   }
@@ -198,43 +197,44 @@ bool prosystem_Save(std::string filename, bool compress) {
 // ----------------------------------------------------------------------------
 bool prosystem_Load(const std::string filename) {
   if(filename.empty( ) || filename.length( ) == 0) {
-    logger_LogError("Filename is invalid.", PRO_SYSTEM_SOURCE);    
+    logger_LogError(IDS_PROSYSTEM1,"");    
     return false;
   }
 
-  logger_LogInfo("Loading game state from file " + filename + ".");
+ 
+  logger_LogInfo(IDS_PROSYSTEM6,filename);
   
   byte buffer[32829] = {0};
   uint size = archive_GetUncompressedFileSize(filename);
   if(size == 0) {
     FILE* file = fopen(filename.c_str( ), "rb");
     if(file == NULL) {
-      logger_LogError("Failed to open the file " + filename + " for reading.", PRO_SYSTEM_SOURCE);
+      logger_LogError(IDS_PROSYSTEM7,filename);
       return false;
     }
 
     if(fseek(file, 0, SEEK_END)) {
       fclose(file);
-      logger_LogError("Failed to find the end of the file.", PRO_SYSTEM_SOURCE);
+      logger_LogError(IDS_PROSYSTEM8,"");
       return false;
     }
   
     size = ftell(file);
     if(fseek(file, 0, SEEK_SET)) {
       fclose(file);
-      logger_LogError("Failed to find the size of the file.", PRO_SYSTEM_SOURCE);
+      logger_LogError(IDS_PROSYSTEM9,"");
       return false;
     }
 
     if(size != 16445 && size != 32829) {
       fclose(file);
-      logger_LogError("Save state file has an invalid size.", PRO_SYSTEM_SOURCE);
+      logger_LogError(IDS_PROSYSTEM10,"");
       return false;
     }
   
     if(fread(buffer, 1, size, file) != size && ferror(file)) {
       fclose(file);
-      logger_LogError("Failed to read the file data.", PRO_SYSTEM_SOURCE);
+      logger_LogError(IDS_PROSYSTEM11,"");
       return false;
     }
     fclose(file);
@@ -243,7 +243,7 @@ bool prosystem_Load(const std::string filename) {
     archive_Uncompress(filename, buffer, size);
   }
   else {
-    logger_LogError("Save state file has an invalid size.", PRO_SYSTEM_SOURCE);
+    logger_LogError(IDS_PROSYSTEM12,"");
     return false;
   }
 
@@ -251,7 +251,7 @@ bool prosystem_Load(const std::string filename) {
   uint index;
   for(index = 0; index < 16; index++) {
     if(buffer[offset + index] != PRO_SYSTEM_STATE_HEADER[index]) {
-      logger_LogError("File is not a valid ProSystem save state.", PRO_SYSTEM_SOURCE);
+      logger_LogError(IDS_PROSYSTEM13,"");
       return false;
     }
   }
@@ -271,7 +271,7 @@ bool prosystem_Load(const std::string filename) {
   }
   offset += 32;
   if(cartridge_digest != std::string(digest)) {
-    logger_LogError("Load state digest [" + std::string(digest) + "] does not match loaded cartridge digest [" + cartridge_digest + "].", PRO_SYSTEM_SOURCE);
+    logger_LogError(IDS_PROSYSTEM14, "[" + std::string(digest) + "] [" + cartridge_digest + "].");
     return false;
   }
   
@@ -292,7 +292,7 @@ bool prosystem_Load(const std::string filename) {
 
   if(cartridge_type == CARTRIDGE_TYPE_SUPERCART_RAM) {
     if(size != 32829) {
-      logger_LogError("Save state file has an invalid size.", PRO_SYSTEM_SOURCE);
+      logger_LogError(IDS_PROSYSTEM15,"");
       return false;
     }
     for(index = 0; index < 16384; index++) {

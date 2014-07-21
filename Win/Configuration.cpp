@@ -23,8 +23,14 @@
 // Configuration.cpp
 // ----------------------------------------------------------------------------
 #include "Configuration.h"
+#include "Console.h"
+
 
 bool configuration_enabled = true;
+bool screenshot1=false;
+bool screenshot2=false;
+uint samplerate;
+
 
 static const std::string CONFIGURATION_SECTION_CONSOLE = "Console";
 static const std::string CONFIGURATION_SECTION_RECENT = "Recent";
@@ -32,6 +38,7 @@ static const std::string CONFIGURATION_SECTION_DISPLAY = "Display";
 static const std::string CONFIGURATION_SECTION_SOUND = "Sound";
 static const std::string CONFIGURATION_SECTION_EMULATION = "Emulation";
 static const std::string CONFIGURATION_SECTION_INPUT = "Input";
+
 static std::string configuration_filename;
 
 // ----------------------------------------------------------------------------
@@ -44,7 +51,6 @@ std::string configuration_CommandLine(std::string commandLine) {
 
   argc = __argc;
   argv = __argv;
-
   for ( i = 1; i < argc; ++i ) {
       if ( strstr(argv[i],"-Fullscreen") || strstr(argv[i],"-fullscreen") ) {
         if ( ++i < argc ) {
@@ -93,9 +99,10 @@ std::string configuration_CommandLine(std::string commandLine) {
 		}
       }
 
-	  else if ( strstr(argv[i],"-Sample_Rate") || strstr(argv[i],"-sample_rate") ) {
+	  else if ( strstr(argv[i],"-SampleRate") || strstr(argv[i],"-samplerate") ) {
         if ( ++i < argc ) {
           sound_SetSampleRate ( atoi(argv[i]) );
+		  samplerate=atoi(argv[i]);
 		}
       }
 
@@ -115,7 +122,7 @@ std::string configuration_CommandLine(std::string commandLine) {
       }
 
   } /* end for each argument */
-
+  menu_Refresh( );
   return tmp_string = "";
 }
 
@@ -195,6 +202,10 @@ std::string configuration_Load(std::string filename, std::string commandLine) {
   console_SetWindowRect(windowRect);
 
   display_stretched = configuration_ReadPrivateBool(CONFIGURATION_SECTION_DISPLAY, "Stretched", "false");
+//Leonis
+  screenshot1 = configuration_ReadPrivateBool(CONFIGURATION_SECTION_DISPLAY, "Screenshot1", "false");
+  screenshot2 = configuration_ReadPrivateBool(CONFIGURATION_SECTION_DISPLAY, "Screenshot2", "false");
+
   display_mode.width = configuration_ReadPrivateUint(CONFIGURATION_SECTION_DISPLAY, "Mode.Width", 640);
   display_mode.height = configuration_ReadPrivateUint(CONFIGURATION_SECTION_DISPLAY, "Mode.Height", 480);
   display_mode.bpp = configuration_ReadPrivateUint(CONFIGURATION_SECTION_DISPLAY, "Mode.BPP", 8);
@@ -217,6 +228,7 @@ std::string configuration_Load(std::string filename, std::string commandLine) {
   sound_SetMuted(configuration_ReadPrivateBool(CONFIGURATION_SECTION_SOUND, "Mute", "false"));
   sound_latency = configuration_ReadPrivateUint(CONFIGURATION_SECTION_SOUND, "Latency", 1);
   sound_SetSampleRate(configuration_ReadPrivateUint(CONFIGURATION_SECTION_SOUND, "Sample.Rate", 44100));
+  samplerate=configuration_ReadPrivateUint(CONFIGURATION_SECTION_SOUND, "Sample.Rate", 44100);
 
   region_type = configuration_ReadPrivateUint(CONFIGURATION_SECTION_EMULATION, "Region", 2);
   console_frameSkip = configuration_ReadPrivateUint(CONFIGURATION_SECTION_EMULATION, "Frame.Skip", 0);
@@ -267,9 +279,15 @@ void configuration_Save(std::string filename) {
   configuration_WritePrivateBool(CONFIGURATION_SECTION_DISPLAY, "Palette.Default", palette_default);
   configuration_WritePrivatePath(CONFIGURATION_SECTION_DISPLAY, "Palette.Filename", palette_filename);
   configuration_WritePrivateBool(CONFIGURATION_SECTION_DISPLAY, "Stretched", display_stretched);
+
+//Leonis
+  configuration_WritePrivateBool(CONFIGURATION_SECTION_DISPLAY, "Screenshot1", screenshot1);
+  configuration_WritePrivateBool(CONFIGURATION_SECTION_DISPLAY, "Screenshot2", screenshot2);
+  
   configuration_WritePrivateUint(CONFIGURATION_SECTION_DISPLAY, "Zoom", display_zoom);
   
   configuration_WritePrivateBool(CONFIGURATION_SECTION_SOUND, "Mute", sound_IsMuted( ));
+
   configuration_WritePrivateUint(CONFIGURATION_SECTION_SOUND, "Sample.Rate", sound_GetSampleRate( ));
   configuration_WritePrivateUint(CONFIGURATION_SECTION_SOUND, "Latency", sound_latency);
 

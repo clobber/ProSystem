@@ -27,6 +27,7 @@
 
 byte logger_level = LOGGER_LEVEL_DEBUG;
 static FILE* logger_file = NULL;
+char a[255]="";
 
 // ----------------------------------------------------------------------------
 // GetTime
@@ -55,9 +56,9 @@ static void logger_Log(std::string message, byte level, std::string source) {
         entry += "[DEBUG]";
         break;
     }
-    entry += " " + message;
+     entry += " " + message;
     if(source.length( ) > 0) {
-      entry += " {" + source + "}";
+      entry += " " + source;
     }
     entry += "\n";
     fwrite(entry.c_str( ), 1, entry.length( ), logger_file);
@@ -81,15 +82,20 @@ bool logger_Initialize(std::string filename) {
   return (logger_file != NULL);
 }
 
+
 // ----------------------------------------------------------------------------
-// LogError
+// LogError //////////
 // ----------------------------------------------------------------------------
-void logger_LogError(std::string message) {
-  logger_LogError(message, "");
+void logger_LogError(int message, std::string source) {
+  if(logger_level == LOGGER_LEVEL_ERROR || logger_level == LOGGER_LEVEL_INFO || logger_level == LOGGER_LEVEL_DEBUG) {
+	LoadString(GetModuleHandle(NULL),message, a, 180);
+	std::string b(a);
+    logger_Log(b, LOGGER_LEVEL_ERROR, source);
+  }
 }
 
 // ----------------------------------------------------------------------------
-// LogError
+// LogError    
 // ----------------------------------------------------------------------------
 void logger_LogError(std::string message, std::string source) {
   if(logger_level == LOGGER_LEVEL_ERROR || logger_level == LOGGER_LEVEL_INFO || logger_level == LOGGER_LEVEL_DEBUG) {
@@ -97,15 +103,20 @@ void logger_LogError(std::string message, std::string source) {
   }
 }
 
-// ----------------------------------------------------------------------------
-// LogInfo
-// ----------------------------------------------------------------------------
-void logger_LogInfo(std::string message) {
-  logger_LogInfo(message, "");
-}
 
 // ----------------------------------------------------------------------------
 // LogInfo
+// ----------------------------------------------------------------------------
+void logger_LogInfo(int message, std::string source) {
+  if(logger_level == LOGGER_LEVEL_INFO || logger_level == LOGGER_LEVEL_DEBUG) {
+	LoadString(GetModuleHandle(NULL),message, a, 180);
+		std::string b(a);
+    logger_Log(b, LOGGER_LEVEL_INFO, source);
+  }
+}
+
+// ----------------------------------------------------------------------------
+// LogInfo /////////
 // ----------------------------------------------------------------------------
 void logger_LogInfo(std::string message, std::string source) {
   if(logger_level == LOGGER_LEVEL_INFO || logger_level == LOGGER_LEVEL_DEBUG) {
@@ -114,10 +125,14 @@ void logger_LogInfo(std::string message, std::string source) {
 }
 
 // ----------------------------------------------------------------------------
-// LogDebug
+// LogDebug ////////////
 // ----------------------------------------------------------------------------
-void logger_LogDebug(std::string message) {
-  logger_LogDebug(message, "");
+void logger_LogDebug(int message, std::string source) {
+  if(logger_level == LOGGER_LEVEL_DEBUG) {
+	LoadString(GetModuleHandle(NULL),message, a, 180);
+		std::string b(a);
+    logger_Log(b, LOGGER_LEVEL_DEBUG, source);
+  }
 }
 
 // ----------------------------------------------------------------------------

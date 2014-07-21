@@ -23,7 +23,6 @@
 // Database.cpp
 // ----------------------------------------------------------------------------
 #include "Database.h"
-#define DATABASE_SOURCE "Database.cpp"
 
 bool database_enabled = true;
 std::string database_filename;
@@ -45,11 +44,11 @@ void database_Initialize( ) {
 // ----------------------------------------------------------------------------
 bool database_Load(std::string digest) {
   if(database_enabled) {
-    logger_LogInfo("Accessing database " + database_filename + ".", DATABASE_SOURCE);
+    logger_LogInfo(IDS_DATABASE1, database_filename);
     
     FILE* file = fopen(database_filename.c_str( ), "r");
     if(file == NULL) {
-      logger_LogError("Failed to open the database for reading.");
+      logger_LogError(IDS_DATABASE2,"");
       return false;  
     }
 

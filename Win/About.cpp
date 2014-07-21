@@ -29,7 +29,7 @@
 // ----------------------------------------------------------------------------
 static BOOL CALLBACK about_Procedure(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) {
   if(message == WM_INITDIALOG) {
-    HWND hStaticVersion = GetDlgItem(hWnd, IDC_STATIC_VERSION);
+    HWND hStaticVersion = GetDlgItem(hWnd, IDC_STATIC_VERSION2);
     std::string versionText = "Version " + common_Format(CONSOLE_VERSION, "%1.1f");
     SetWindowText(hStaticVersion, versionText.c_str( ));
   }

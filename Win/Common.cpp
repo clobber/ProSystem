@@ -160,6 +160,33 @@ std::string common_Remove(std::string target, char value) {
 }
 
 // ----------------------------------------------------------------------------
+// Replace (string, from, to)
+// ----------------------------------------------------------------------------
+std::string common_Replace(std::string target, char value1, char value2) {
+  int length = 0;
+  int index;
+  for(index = 0; index < target.size( ); index++) {
+     length++;
+      }
+  
+  char* buffer = new char[length + 1];
+  for(index = 0; index < target.size( ); index++) {
+    if(target[index] != value1) {
+      buffer[index] = target[index];
+      }
+	else
+	{
+		buffer[index] = value2;
+	}
+  }
+  
+  buffer[length] = 0;
+  std::string source = buffer;
+  delete[ ] buffer;
+  return source;
+}
+
+// ----------------------------------------------------------------------------
 // GetErrorMessage
 // ----------------------------------------------------------------------------
 std::string common_GetErrorMessage( ) {
