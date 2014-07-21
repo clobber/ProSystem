@@ -2,7 +2,15 @@ Original program by Greg Stanton.
 Revision history:
 
 
-Version 1.3b (2009/03/20) - Greg Dement
+Version 1.3c (2009/03/25) - Greg DeMent
+---------------------------------------
+minor update to handling of window position:
+- FIXED: emulator window now opens in previously saved position, not 0,0 (console.cpp)
+- changed default window position to (120, 120) instead of upper left corner. (configuration.cpp)
+	This prevents menu and title bar from appearing underneath some taskbar setups.
+
+
+Version 1.3b (2009/03/20) - Greg DeMent
 ---------------------------------------
 minor changes to controller input:
 Controller button 1 is now mapped as the left button, button 2 is the right. (Riot.cpp)

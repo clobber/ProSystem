@@ -48,7 +48,7 @@ static void console_SetSize(uint left, uint top, uint width, uint height) {
     GetWindowRect(console_hWnd, &console_windowRect);
     RECT resizeRect = {left, top, width - 1, height - 1};
     AdjustWindowRectEx(&resizeRect, CONSOLE_WINDOW_STYLE, menu_IsEnabled( ), CONSOLE_WINDOW_STYLE_EX);
-    MoveWindow(console_hWnd, console_windowRect.left, console_windowRect.top, resizeRect.right - resizeRect.left, resizeRect.bottom - resizeRect.top, true);
+	MoveWindow(console_hWnd, console_windowRect.left, console_windowRect.top, resizeRect.right - resizeRect.left, resizeRect.bottom - resizeRect.top, true);
   }  
 }
 
@@ -873,7 +873,8 @@ bool console_Initialize(HINSTANCE hInstance, std::string commandLine) {
   wClass.hbrBackground = (HBRUSH)GetStockObject(BLACK_BRUSH);
   wClass.lpszMenuName = NULL;
   wClass.lpszClassName = CONSOLE_TITLE;
-  
+
+
   if(!RegisterClassEx(&wClass)) {
     logger_LogError(IDS_CONSOLE2,"");
     logger_LogError(common_GetErrorMessage( ), "");
@@ -885,7 +886,7 @@ bool console_Initialize(HINSTANCE hInstance, std::string commandLine) {
   console_hInstance = hInstance;
   romfile = configuration_Load(common_defaultPath + "ProSystem.ini", commandLine);
 
-  // Setup Display for Fullscreen or Windowed
+	// Setup Display for Fullscreen or Windowed
   if ( display_fullscreen ) {
     console_hWnd = CreateWindowEx(WS_EX_TOPMOST, CONSOLE_TITLE, CONSOLE_TITLE, WS_POPUP, 0, 0, 0, 0, NULL, NULL, hInstance, NULL);
     if(!menu_Initialize(console_hWnd, hInstance)) {
@@ -907,8 +908,8 @@ bool console_Initialize(HINSTANCE hInstance, std::string commandLine) {
       return false;
 	}
   }
-  else {
-    console_hWnd = CreateWindowEx(CONSOLE_WINDOW_STYLE_EX, CONSOLE_TITLE, CONSOLE_TITLE, CONSOLE_WINDOW_STYLE, 0, 0, 0, 0, NULL, NULL, hInstance, NULL);
+  else {	/*gdement: edited following line to use loaded window position.  console_windowRect currently has values loaded from prosystem.ini file.  Width/Height are changed later.*/
+    console_hWnd = CreateWindowEx(CONSOLE_WINDOW_STYLE_EX, CONSOLE_TITLE, CONSOLE_TITLE, CONSOLE_WINDOW_STYLE, console_windowRect.left, console_windowRect.top, 0, 0, NULL, NULL, hInstance, NULL);
     if(!menu_Initialize(console_hWnd, hInstance)) {
       logger_LogError(IDS_CONSOLE3,"");
       return false;

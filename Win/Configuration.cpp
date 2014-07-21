@@ -195,8 +195,8 @@ std::string configuration_Load(std::string filename, std::string commandLine) {
   }
   
   RECT windowRect = {0};
-  windowRect.left = configuration_ReadPrivateUint(CONFIGURATION_SECTION_CONSOLE, "Window.Left", 0);
-  windowRect.top = configuration_ReadPrivateUint(CONFIGURATION_SECTION_CONSOLE, "Window.Top", 0);
+  windowRect.left = configuration_ReadPrivateUint(CONFIGURATION_SECTION_CONSOLE, "Window.Left", 120);
+  windowRect.top = configuration_ReadPrivateUint(CONFIGURATION_SECTION_CONSOLE, "Window.Top", 120);
   windowRect.right = configuration_ReadPrivateUint(CONFIGURATION_SECTION_CONSOLE, "Window.Right", 0);
   windowRect.bottom = configuration_ReadPrivateUint(CONFIGURATION_SECTION_CONSOLE, "Window.Bottom", 0);
   console_SetWindowRect(windowRect);

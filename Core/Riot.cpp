@@ -63,6 +63,9 @@ void riot_SetInput(const byte* input) {
   (input[0x01])? memory_ram[SWCHA] = memory_ram[SWCHA] &~ 0x40: memory_ram[SWCHA] = memory_ram[SWCHA] | 0x40;
   (input[0x02])? memory_ram[SWCHA] = memory_ram[SWCHA] &~ 0x20: memory_ram[SWCHA] = memory_ram[SWCHA] | 0x20;
   (input[0x03])? memory_ram[SWCHA] = memory_ram[SWCHA] &~ 0x10: memory_ram[SWCHA] = memory_ram[SWCHA] | 0x10;
+	/*gdement:  Button behavior is not hardware accurate.
+				Real console requires 2-button mode to be explicitly enabled.
+				These modes probably need to be added to fix some issues.*/
   memory_ram[INPT4] = memory_ram[INPT4] | 0x80;			//gdement: start with INPT4 signal off. Either button can turn it on.
   if(input[0x04]) {										//this is button 1, mapped as the Left button
     memory_ram[INPT1] = memory_ram[INPT1] |  0x80;
