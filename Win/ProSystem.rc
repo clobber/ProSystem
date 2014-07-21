@@ -1,0 +1,320 @@
+//Microsoft Developer Studio generated resource script.
+//
+#include "resource.h"
+
+#define APSTUDIO_READONLY_SYMBOLS
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 2 resource.
+//
+#include "afxres.h"
+
+/////////////////////////////////////////////////////////////////////////////
+#undef APSTUDIO_READONLY_SYMBOLS
+
+/////////////////////////////////////////////////////////////////////////////
+// English (U.S.) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
+#ifdef _WIN32
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
+#pragma code_page(1252)
+#endif //_WIN32
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Menu
+//
+
+IDR_MENU_MAIN MENU DISCARDABLE 
+BEGIN
+    POPUP "&File"
+    BEGIN
+        MENUITEM "&Open...\tCtrl+O",            IDM_FILE_OPEN
+        MENUITEM "&Close",                      IDM_FILE_CLOSE
+        POPUP "&Recent"
+        BEGIN
+            MENUITEM "&0",                          IDM_RECENT_SLOT0
+            MENUITEM "&1",                          IDM_RECENT_SLOT1
+            MENUITEM "&2",                          IDM_RECENT_SLOT2
+            MENUITEM "&3",                          IDM_RECENT_SLOT3
+            MENUITEM "&4",                          IDM_RECENT_SLOT4
+            MENUITEM "&5",                          IDM_RECENT_SLOT5
+            MENUITEM "&6",                          IDM_RECENT_SLOT6
+            MENUITEM "&7",                          IDM_RECENT_SLOT7
+            MENUITEM "&8",                          IDM_RECENT_SLOT8
+            MENUITEM "&9",                          IDM_RECENT_SLOT9
+        END
+        MENUITEM SEPARATOR
+        MENUITEM "Save...\tCtrl+S",             IDM_FILE_SAVE
+        MENUITEM "&Load...\tCtrl+L",            IDM_FILE_LOAD
+        MENUITEM SEPARATOR
+        MENUITEM "&Exit",                       IDM_FILE_EXIT
+    END
+    POPUP "&Options"
+    BEGIN
+        MENUITEM "&Reset\tCtrl+R",              IDM_OPTIONS_RESET
+        MENUITEM "&Pause\tCtrl+P",              IDM_OPTIONS_PAUSE
+        MENUITEM SEPARATOR
+        POPUP "&Display"
+        BEGIN
+            MENUITEM "&Full Screen\tCtrl+F",        IDM_DISPLAY_FULLSCREEN
+            POPUP "&Modes"
+            BEGIN
+                MENUITEM " ",                           IDM_BLANK
+            END
+            MENUITEM "&Stretched",                  IDM_DISPLAY_STRETCHED
+            MENUITEM "&Palette...",                 IDM_DISPLAY_PALETTE
+            MENUITEM SEPARATOR
+            MENUITEM "x&1",                         IDM_DISPLAY_ZOOM1
+            MENUITEM "x&2",                         IDM_DISPLAY_ZOOM2
+            MENUITEM "x&3",                         IDM_DISPLAY_ZOOM3
+            MENUITEM "x&4",                         IDM_DISPLAY_ZOOM4
+            MENUITEM SEPARATOR
+            MENUITEM "S&creenshot...\tCtrl+C",      IDM_DISPLAY_SCREENSHOT
+        END
+        POPUP "&Sound"
+        BEGIN
+            MENUITEM "&Mute\tCtrl+M",               IDM_SOUND_MUTE
+            MENUITEM SEPARATOR
+            POPUP "&Sample Rate"
+            BEGIN
+                MENUITEM "11025",                       IDM_SAMPLERATE_11025
+                MENUITEM "22050",                       IDM_SAMPLERATE_22050
+                MENUITEM "31440",                       IDM_SAMPLERATE_31440
+                MENUITEM "44100",                       IDM_SAMPLERATE_44100
+                MENUITEM "48000",                       IDM_SAMPLERATE_48000
+                MENUITEM "96000",                       IDM_SAMPLERATE_96000
+            END
+            POPUP "&Latency"
+            BEGIN
+                MENUITEM "&None",                       IDM_LATENCY_NONE
+                MENUITEM "&Very Low",                   IDM_LATENCY_VERYLOW
+                MENUITEM "&Low",                        IDM_LATENCY_LOW
+                MENUITEM "&Medium",                     IDM_LATENCY_MEDIUM
+                MENUITEM "&High",                       IDM_LATENCY_HIGH
+                MENUITEM "&Very High",                  IDM_LATENCY_VERYHIGH
+            END
+        END
+        POPUP "&Emulation"
+        BEGIN
+            POPUP "&Region"
+            BEGIN
+                MENUITEM "&Auto",                       IDM_REGION_AUTO
+                MENUITEM SEPARATOR
+                MENUITEM "&Ntsc",                       IDM_REGION_NTSC
+                MENUITEM "&Pal",                        IDM_REGION_PAL
+            END
+            POPUP "&Frame Skip"
+            BEGIN
+                MENUITEM "0",                           IDM_FRAMESKIP_0
+                MENUITEM "1",                           IDM_FRAMESKIP_1
+                MENUITEM "2",                           IDM_FRAMESKIP_2
+                MENUITEM "3",                           IDM_FRAMESKIP_3
+                MENUITEM "4",                           IDM_FRAMESKIP_4
+                MENUITEM "5",                           IDM_FRAMESKIP_5
+                MENUITEM "6",                           IDM_FRAMESKIP_6
+                MENUITEM "7",                           IDM_FRAMESKIP_7
+                MENUITEM "8",                           IDM_FRAMESKIP_8
+                MENUITEM "9",                           IDM_FRAMESKIP_9
+                MENUITEM "10",                          IDM_FRAMESKIP_10
+                MENUITEM "15",                          IDM_FRAMESKIP_15
+                MENUITEM "20",                          IDM_FRAMESKIP_20
+                MENUITEM "25",                          IDM_FRAMESKIP_25
+                MENUITEM "30",                          IDM_FRAMESKIP_30
+            END
+            MENUITEM "&Bios...",                    IDM_EMULATION_BIOS
+            MENUITEM "&Database...",                IDM_EMULATION_DATABASE
+        END
+        POPUP "&Input"
+        BEGIN
+            MENUITEM "Controller &1...",            IDM_INPUT_CONTROLLER1
+            MENUITEM "Controller &2...",            IDM_INPUT_CONTROLLER2
+            MENUITEM "&Console...",                 IDM_INPUT_CONSOLE
+        END
+        MENUITEM SEPARATOR
+        MENUITEM "&Menu\tEsc",                  IDM_OPTIONS_MENU
+    END
+    POPUP "&Help"
+    BEGIN
+        MENUITEM "&Contents...\tF1",            IDM_HELP_CONTENTS
+        MENUITEM SEPARATOR
+        MENUITEM "&About...",                   IDM_HELP_ABOUT
+    END
+END
+
+
+#ifdef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// TEXTINCLUDE
+//
+
+1 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "resource.h\0"
+END
+
+2 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "#include ""afxres.h""\r\n"
+    "\0"
+END
+
+3 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "\r\n"
+    "\0"
+END
+
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Accelerator
+//
+
+IDR_ACCELERATOR ACCELERATORS DISCARDABLE 
+BEGIN
+    "C",            IDM_DISPLAY_SCREENSHOT, VIRTKEY, CONTROL, NOINVERT
+    "F",            IDM_DISPLAY_FULLSCREEN, VIRTKEY, CONTROL, NOINVERT
+    "L",            IDM_FILE_LOAD,          VIRTKEY, CONTROL, NOINVERT
+    "M",            IDM_SOUND_MUTE,         VIRTKEY, CONTROL, NOINVERT
+    "O",            IDM_FILE_OPEN,          VIRTKEY, CONTROL, NOINVERT
+    "P",            IDM_OPTIONS_PAUSE,      VIRTKEY, CONTROL, NOINVERT
+    "R",            IDM_OPTIONS_RESET,      VIRTKEY, CONTROL, NOINVERT
+    "S",            IDM_FILE_SAVE,          VIRTKEY, CONTROL, NOINVERT
+    VK_ESCAPE,      IDM_OPTIONS_MENU,       VIRTKEY, NOINVERT
+    VK_F1,          IDM_HELP_CONTENTS,      VIRTKEY, NOINVERT
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Icon
+//
+
+// Icon with lowest ID value placed first to ensure application icon
+// remains consistent on all systems.
+IDI_ICON_PROSYSTEM      ICON    DISCARDABLE     "ProSystem.ico"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+IDD_DIALOG_ABOUT DIALOG DISCARDABLE  0, 0, 137, 76
+STYLE DS_MODALFRAME | WS_CAPTION | WS_SYSMENU
+CAPTION "About ProSystem"
+FONT 8, "MS Sans Serif"
+BEGIN
+    ICON            IDI_ICON_PROSYSTEM,IDC_STATIC,5,4,20,20
+    CTEXT           "ProSystem Emulator",IDC_STATIC,33,6,73,8
+    DEFPUSHBUTTON   "OK",IDC_BUTTON_ABOUT_OK,45,56,45,14
+    CTEXT           "Copyright 2005 Greg Stanton",IDC_STATIC,5,32,125,8,
+                    SS_CENTERIMAGE
+    CTEXT           "",IDC_STATIC_VERSION,5,42,125,8,SS_CENTERIMAGE
+    CTEXT           "Atari 7800",IDC_STATIC,35,15,68,8
+END
+
+IDD_DIALOG_CONTROLLER DIALOG DISCARDABLE  0, 0, 117, 135
+STYLE DS_MODALFRAME | WS_CAPTION | WS_SYSMENU
+FONT 8, "MS Sans Serif"
+BEGIN
+    COMBOBOX        IDC_COMBO_CONTROLLER_UP,50,8,57,151,CBS_DROPDOWNLIST | 
+                    WS_VSCROLL | WS_TABSTOP
+    LTEXT           "Up",IDC_STATIC,9,10,36,10,SS_CENTERIMAGE
+    LTEXT           "Down",IDC_STATIC,9,25,36,10,SS_CENTERIMAGE
+    LTEXT           "Left",IDC_STATIC,9,40,36,10,SS_CENTERIMAGE
+    LTEXT           "Right",IDC_STATIC,9,55,36,10,SS_CENTERIMAGE
+    LTEXT           "Button 1",IDC_STATIC,9,70,36,10,SS_CENTERIMAGE
+    LTEXT           "Button 2",IDC_STATIC,9,85,36,10,SS_CENTERIMAGE
+    PUSHBUTTON      "OK",IDC_BUTTON_CONTROLLER_OK,18,110,40,14
+    COMBOBOX        IDC_COMBO_CONTROLLER_DOWN,50,23,57,151,CBS_DROPDOWNLIST | 
+                    WS_VSCROLL | WS_TABSTOP
+    COMBOBOX        IDC_COMBO_CONTROLLER_LEFT,50,38,57,151,CBS_DROPDOWNLIST | 
+                    WS_VSCROLL | WS_TABSTOP
+    COMBOBOX        IDC_COMBO_CONTROLLER_RIGHT,50,53,57,151,CBS_DROPDOWNLIST | 
+                    WS_VSCROLL | WS_TABSTOP
+    COMBOBOX        IDC_COMBO_CONTROLLER_BUTTON1,50,68,57,151,
+                    CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    COMBOBOX        IDC_COMBO_CONTROLLER_BUTTON2,50,83,57,151,
+                    CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    PUSHBUTTON      "Cancel",IDC_BUTTON_CONTROLLER_CANCEL,60,110,40,14
+END
+
+IDD_DIALOG_CONSOLE DIALOG DISCARDABLE  0, 0, 117, 135
+STYLE DS_MODALFRAME | WS_CAPTION | WS_SYSMENU
+CAPTION "Console"
+FONT 8, "MS Sans Serif"
+BEGIN
+    COMBOBOX        IDC_COMBO_CONSOLE_RESET,50,8,57,151,CBS_DROPDOWNLIST | 
+                    WS_VSCROLL | WS_TABSTOP
+    LTEXT           "Reset",-1,9,10,36,10,SS_CENTERIMAGE
+    LTEXT           "Select",-1,9,25,36,10,SS_CENTERIMAGE
+    LTEXT           "Pause",-1,9,40,36,10,SS_CENTERIMAGE
+    LTEXT           "R Difficulty",-1,9,55,36,10,SS_CENTERIMAGE
+    LTEXT           "L Difficulty",-1,9,70,36,10,SS_CENTERIMAGE
+    PUSHBUTTON      "OK",IDC_BUTTON_CONSOLE_OK,18,110,40,14
+    COMBOBOX        IDC_COMBO_CONSOLE_SELECT,50,23,57,151,CBS_DROPDOWNLIST | 
+                    WS_VSCROLL | WS_TABSTOP
+    COMBOBOX        IDC_COMBO_CONSOLE_PAUSE,50,38,57,151,CBS_DROPDOWNLIST | 
+                    WS_VSCROLL | WS_TABSTOP
+    COMBOBOX        IDC_COMBO_CONSOLE_RIGHT,50,53,57,151,CBS_DROPDOWNLIST | 
+                    WS_VSCROLL | WS_TABSTOP
+    COMBOBOX        IDC_COMBO_CONSOLE_LEFT,50,68,57,151,CBS_DROPDOWNLIST | 
+                    WS_VSCROLL | WS_TABSTOP
+    PUSHBUTTON      "Cancel",IDC_BUTTON_CONSOLE_CANCEL,60,110,40,14
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO DISCARDABLE 
+BEGIN
+    IDD_DIALOG_ABOUT, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 130
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 69
+    END
+
+    IDD_DIALOG_CONTROLLER, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 110
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 128
+    END
+
+    IDD_DIALOG_CONSOLE, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 110
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 128
+    END
+END
+#endif    // APSTUDIO_INVOKED
+
+#endif    // English (U.S.) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+
+#ifndef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 3 resource.
+//
+
+
+/////////////////////////////////////////////////////////////////////////////
+#endif    // not APSTUDIO_INVOKED
+
