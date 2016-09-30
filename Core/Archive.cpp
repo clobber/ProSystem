@@ -28,7 +28,7 @@
 // GetUncompressedFileSize
 // ----------------------------------------------------------------------------
 uint archive_GetUncompressedFileSize(std::string filename) {
-  if((filename.empty( ) || filename.size( ) == 0)) {
+  if(filename.empty( ) || filename.size( ) == 0) {
     logger_LogError(IDS_ZIP1,"");
     return 0;
   }

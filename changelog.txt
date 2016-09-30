@@ -1,6 +1,25 @@
 Original program by Greg Stanton.
 Revision history:
 
+Version 1.3f (2015/09/06) - JnO, from enhancements by raz0red
+-------------------------------------------------------------
+Back-ported some of the enhancements made by raz0red in his wii port (wii7800 v0.3) of the emulator:
+- Increased accuracy of Maria cycle timing, games now run at close to their intended speed (One on One, Tower Toppler, Summer Games, KLAX, Karateka, etc.)
+- Increased compatibility for PAL games (Ballblazer, Commando, and Food Fight now work)    
+- Timers now properly take into consideration cycles generated via Maria and during WSYNC
+- Changes to ProSystem database format
+    - Maria cycles are now enabled by default (option 0x1 now disables
+      Maria, the opposite of before)
+    - Ability to set HBLANK period
+- All games now have Maria cycles and WSYNC enabled in the ProSystem database (with the exception of MIA)    
+- Emulation for the following games was improved: 
+    - Kung Fu Master no longer has the lines in the upper left corner of
+      display and the Fuji logo appears as it should (if using BIOS)
+    - Midnight Mutants has less graphical glitches
+    - Summer Games has less graphical glitches
+    - Plutos has slightly less graphical glitches
+- Fixed save/restore state issue for games that use RIOT timers.  
+
 
 Version 1.3e (2009/06/04) - Greg DeMent
 ---------------------------------------

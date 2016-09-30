@@ -41,7 +41,7 @@ extern uint maria_RenderScanline( );
 extern void maria_Clear( );
 extern rect maria_displayArea;
 extern rect maria_visibleArea;
-extern byte maria_surface[MARIA_SURFACE_SIZE];
+extern byte maria_surface[];
 extern word maria_scanline;
 
 #endif

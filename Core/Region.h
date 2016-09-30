@@ -38,7 +38,11 @@ typedef unsigned char byte;
 typedef unsigned short word;
 typedef unsigned int uint;
 
-extern void region_Reset( );
 extern byte region_type;
+
+extern const byte REGION_PALETTE_PAL[ ];
+extern const byte REGION_PALETTE_NTSC[ ];
+
+extern void region_Reset( );
 
 #endif

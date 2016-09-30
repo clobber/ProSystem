@@ -46,6 +46,10 @@ void memory_Reset( ) {
 byte memory_Read(word address) {
   byte tmp_byte;
 
+  if( cartridge_pokey && address == POKEY_RANDOM ) {
+      return pokey_GetRegister( POKEY_RANDOM );
+  }
+
   switch ( address ) {
   case INTIM:
   case INTIM | 0x2:
@@ -114,13 +118,12 @@ void memory_Write(word address, byte data) {
       case AUDV1:
         tia_SetRegister(AUDV1, data);
         break;
-	  case SWCHA:	/*gdement:  Writing here actually writes to DRA inside the RIOT chip.
-					This value only indirectly affects output of SWCHA.  Ditto for SWCHB.*/
-		riot_SetDRA(data);
-		break;
-	  case SWCHB:
-		riot_SetDRB(data);
-		break;
+      case SWCHA:	    // gdement:  Writing here actually writes to DRA inside the RIOT chip.
+        riot_SetDRA(data);  // This value only indirectly affects output of SWCHA.  Ditto for SWCHB.
+        break;
+      case SWCHB:
+        riot_SetDRB(data);
+        break;
       case TIM1T:
       case TIM1T | 0x8:
         riot_SetTimer(TIM1T, data);

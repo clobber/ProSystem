@@ -56,8 +56,8 @@ bool database_Load(std::string digest) {
     while(fgets(buffer, 256, file) != NULL) {
       std::string line = buffer;
       if(line.compare(1, 32, digest.c_str( )) == 0) {
-        std::string entry[7];
-        for(int index = 0; index < 7; index++) {
+        std::string entry[11];
+        for(int index = 0; index < 11; index++) {
           fgets(buffer, 256, file);
           entry[index] = common_Remove(buffer, '\n');  
         }
@@ -69,6 +69,14 @@ bool database_Load(std::string digest) {
         cartridge_controller[1] = common_ParseByte(database_GetValue(entry[4]));
         cartridge_region = common_ParseByte(database_GetValue(entry[5]));
         cartridge_flags = common_ParseUint(database_GetValue(entry[6]));
+
+        // Optionally load the lightgun crosshair offsets, hblank, dual analog
+        for( index = 7; index < 11; index++ ) {
+          if( entry[index].find( "hblank" ) != std::string::npos ) {
+              cartridge_hblank = common_ParseInt(database_GetValue(entry[index]));
+          }         
+        }
+
         break;
       }
     }    

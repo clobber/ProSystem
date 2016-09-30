@@ -31,6 +31,11 @@ word prosystem_frequency = 60;
 byte prosystem_frame = 0;
 word prosystem_scanlines = 262;
 uint prosystem_cycles = 0;
+uint prosystem_extra_cycles = 0;
+
+// Whether the last CPU operation resulted in a half cycle (need to take it
+// into consideration)
+extern bool half_cycle;
 
 // ----------------------------------------------------------------------------
 // Reset
@@ -39,6 +44,7 @@ void prosystem_Reset( ) {
   if(cartridge_IsLoaded( )) {
     prosystem_paused = false;
     prosystem_frame = 0;
+    sally_Reset( ); // WII
     region_Reset( );
     tia_Clear( );
     tia_Reset( );
@@ -62,58 +68,127 @@ void prosystem_Reset( ) {
 // ----------------------------------------------------------------------------
 // ExecuteFrame
 // ----------------------------------------------------------------------------
-void prosystem_ExecuteFrame(const byte* input) {
-  riot_SetInput(input);
-  
-  for(maria_scanline = 1; maria_scanline <= prosystem_scanlines; maria_scanline++) {
-    if(maria_scanline == maria_displayArea.top) {
-      memory_ram[MSTAT] = 0;
+void prosystem_ExecuteFrame(const byte* input){
+
+    // Is WSYNC enabled for the current frame?
+    bool wsync = !( cartridge_flags & CARTRIDGE_WSYNC_MASK );
+
+    // Is Maria cycle stealing enabled for the current frame?
+    bool cycle_stealing = !( cartridge_flags & CARTRIDGE_CYCLE_STEALING_MASK );
+
+    riot_SetInput(input);
+
+    prosystem_extra_cycles = 0;
+
+    if( cartridge_pokey ) pokey_Frame();
+
+    for( maria_scanline = 1; maria_scanline <= prosystem_scanlines; maria_scanline++ ) 
+    {
+        if( maria_scanline == maria_displayArea.top ) 
+        {
+            memory_ram[MSTAT] = 0;
+        }
+        else if( maria_scanline == maria_displayArea.bottom ) 
+        {
+            memory_ram[MSTAT] = 128;
+        }
+
+        // Was a WSYNC performed within the current scanline?
+        bool wsync_scanline = false;
+
+        uint cycles = 0;    
+
+        if( !cycle_stealing || ( memory_ram[CTRL] & 96 ) != 64 )
+        {
+            // Exact cycle counts when Maria is disabled        
+            prosystem_cycles %= CYCLES_PER_SCANLINE;
+            prosystem_extra_cycles = 0;
+        }
+
+        else
+        {
+            prosystem_extra_cycles = ( prosystem_cycles % CYCLES_PER_SCANLINE );
+
+            // Some fudge for Maria cycles. Unfortunately Maria cycle counting
+            // isn't exact (This adds some extra cycles).
+            prosystem_cycles = 0;        
+        }
+
+        while( prosystem_cycles < cartridge_hblank ) 
+        {
+            cycles = sally_ExecuteInstruction( );
+            prosystem_cycles += (cycles << 2 );
+            if( half_cycle ) prosystem_cycles += 2;
+
+            if( riot_timing ) 
+            {
+                riot_UpdateTimer( cycles );
+            }
+
+            if( memory_ram[WSYNC] && wsync ) 
+            {
+                memory_ram[WSYNC] = false;
+                wsync_scanline = true;
+                break;
+            }      
+        }    
+
+        cycles = maria_RenderScanline();    
+
+        if( cycle_stealing ) 
+        {
+            prosystem_cycles += cycles;            
+
+            if( riot_timing ) 
+            {
+                riot_UpdateTimer( cycles >> 2 );
+            }
+        }
+
+        while( !wsync_scanline && prosystem_cycles < CYCLES_PER_SCANLINE ) 
+        {
+            cycles = sally_ExecuteInstruction( );            
+            prosystem_cycles += ( cycles << 2 );
+            if( half_cycle ) prosystem_cycles += 2;
+
+            if( riot_timing ) 
+            {
+                riot_UpdateTimer( cycles );
+            }
+
+            if( memory_ram[WSYNC] && wsync )
+            {
+                memory_ram[WSYNC] = false;
+                wsync_scanline = true;
+                break;
+            }
+        }
+
+        // If a WSYNC was performed and the current cycle count is less than
+        // the cycles per scanline, add those cycles to current timers.
+        if( wsync_scanline && prosystem_cycles < CYCLES_PER_SCANLINE )
+        {
+            if( riot_timing ) 
+            {
+                riot_UpdateTimer( ( CYCLES_PER_SCANLINE - prosystem_cycles ) >> 2 );
+            }
+            prosystem_cycles = CYCLES_PER_SCANLINE;            
+        }
+
+        tia_Process(2);
+
+        if( cartridge_pokey ) 
+        {
+            pokey_Process(2);
+	    pokey_Scanline();
+        }
+    }  
+
+    prosystem_frame++;
+    if( prosystem_frame >= prosystem_frequency ) 
+    {
+        prosystem_frame = 0;
     }
-    if(maria_scanline == maria_displayArea.bottom) {
-      memory_ram[MSTAT] = 128;
-    }
-    
-    uint cycles;
-    prosystem_cycles %= 456;
-    while(prosystem_cycles < 28) {
-      cycles = sally_ExecuteInstruction( );
-      prosystem_cycles += (cycles << 2);
-      if(riot_timing) {
-        riot_UpdateTimer(cycles);
-      }
-      if(memory_ram[WSYNC] && !(cartridge_flags & CARTRIDGE_WSYNC_MASK)) {
-        prosystem_cycles = 456;
-        memory_ram[WSYNC] = false;
-        break;
-      }
-    }
-    
-    cycles = maria_RenderScanline( );
-    if(cartridge_flags & CARTRIDGE_CYCLE_STEALING_MASK) {
-      prosystem_cycles += cycles;
-    }
-    
-    while(prosystem_cycles < 456) {
-      cycles = sally_ExecuteInstruction( );
-      prosystem_cycles += (cycles << 2);
-      if(riot_timing) {
-        riot_UpdateTimer(cycles);
-      }
-      if(memory_ram[WSYNC] && !(cartridge_flags & CARTRIDGE_WSYNC_MASK)) {
-        prosystem_cycles = 456;
-        memory_ram[WSYNC] = false;
-        break;
-      }
-    }
-    tia_Process(2);
-    if(cartridge_pokey) {
-      pokey_Process(2);
-    }
-  }
-  prosystem_frame++;
-  if(prosystem_frame >= prosystem_frequency) {
-    prosystem_frame = 0;
-  }
 }
 
 // ----------------------------------------------------------------------------
@@ -167,7 +242,17 @@ bool prosystem_Save(std::string filename, bool compress) {
     } 
     size += 16384;
   }
-  
+
+  // RIOT state
+  buffer[size++] = riot_dra;
+  buffer[size++] = riot_drb;
+  buffer[size++] = riot_timing;
+  buffer[size++] = ( 0xff & ( riot_timer >> 8 ) );
+  buffer[size++] = ( 0xff & riot_timer );  
+  buffer[size++] = riot_intervals;
+  buffer[size++] = ( 0xff & ( riot_clocks >> 8 ) );
+  buffer[size++] = ( 0xff & riot_clocks );
+
   if(!compress) {
     FILE* file = fopen(filename.c_str( ), "wb");
     if(file == NULL) {
@@ -226,7 +311,8 @@ bool prosystem_Load(const std::string filename) {
       return false;
     }
 
-    if(size != 16445 && size != 32829) {
+    if( size != 16445 && size != 32829 && 
+         size != 16453 && size != 32837 ) {
       fclose(file);
       logger_LogError(IDS_PROSYSTEM10,"");
       return false;
@@ -291,7 +377,7 @@ bool prosystem_Load(const std::string filename) {
   offset += 16384;
 
   if(cartridge_type == CARTRIDGE_TYPE_SUPERCART_RAM) {
-    if(size != 32829) {
+    if(size != 32829 && size != 32837) {
       logger_LogError(IDS_PROSYSTEM15,"");
       return false;
     }
@@ -300,6 +386,18 @@ bool prosystem_Load(const std::string filename) {
     }
     offset += 16384; 
   }  
+
+  if( size == 16453 || size == 32837 ) {
+      // RIOT state
+      riot_dra = buffer[offset++];
+      riot_drb = buffer[offset++];
+      riot_timing = buffer[offset++] != 0;
+      riot_timer = ( buffer[offset++] << 8 );
+      riot_timer |= buffer[offset++];
+      riot_intervals = buffer[offset++];
+      riot_clocks = ( buffer[offset++] << 8 );
+      riot_clocks |= buffer[offset++];
+  }
 
   return true;
 }

@@ -40,7 +40,8 @@
 // ----------------------------------------------------------------------------
 #ifndef TIA_H
 #define TIA_H
-#define TIA_BUFFER_SIZE 624
+//#define TIA_BUFFER_SIZE 624
+#define TIA_BUFFER_SIZE 2048 // WII
 
 #include "Equates.h"
 

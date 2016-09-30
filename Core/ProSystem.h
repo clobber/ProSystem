@@ -40,6 +40,9 @@
 #include "Tia.h"
 #include "Pokey.h"
 
+// The number of cycles per scan line
+#define CYCLES_PER_SCANLINE 454
+
 typedef unsigned char byte;
 typedef unsigned short word;
 typedef unsigned int uint;
@@ -56,5 +59,6 @@ extern word prosystem_frequency;
 extern byte prosystem_frame;
 extern word prosystem_scanlines;
 extern uint prosystem_cycles;
+extern uint prosystem_extra_cycles;
 
 #endif

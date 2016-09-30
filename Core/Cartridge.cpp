@@ -36,6 +36,7 @@ bool cartridge_pokey;
 byte cartridge_controller[2];
 byte cartridge_bank;
 uint cartridge_flags;
+uint cartridge_hblank = 34;
 
 static byte* cartridge_buffer = NULL;
 static uint cartridge_size = 0;
@@ -94,7 +95,7 @@ static void cartridge_ReadHeader(const byte* header) {
   }
   cartridge_title = temp;
   
-  cartridge_size  = header[49] << 32;
+  cartridge_size  = header[49] << 24;
   cartridge_size |= header[50] << 16;
   cartridge_size |= header[51] << 8;
   cartridge_size |= header[52];
@@ -233,7 +234,7 @@ bool cartridge_Load(std::string filename) {
   if(data != NULL) {
     delete [ ] data;
   }
-  
+
   cartridge_filename = filename;
   logger_LogInfo("MD5 hash:", cartridge_digest);
   return true;
@@ -315,7 +316,7 @@ void cartridge_Write(word address, byte data) {
       break;
   }
 
-  if(cartridge_pokey && address >= 0x4000 && address < 0x4009) {
+  if(cartridge_pokey && address >= 0x4000 && address <= 0x400f) {
     switch(address) {
       case POKEY_AUDF1:
         pokey_SetRegister(POKEY_AUDF1, data);
@@ -343,6 +344,9 @@ void cartridge_Write(word address, byte data) {
         break;
       case POKEY_AUDCTL:
         pokey_SetRegister(POKEY_AUDCTL, data);
+        break;
+      case POKEY_SKCTLS:
+        pokey_SetRegister(POKEY_SKCTLS, data);
         break;
     }
   }
@@ -389,5 +393,19 @@ void cartridge_Release( ) {
     delete [ ] cartridge_buffer;
     cartridge_size = 0;
     cartridge_buffer = NULL;
+
+    //
+    // WII
+    //
+    // These values need to be reset so that moving between carts works
+    // consistently. This seems to be a ProSystem emulator bug.
+    //
+    cartridge_type = 0;
+    cartridge_region = 0;
+    cartridge_pokey = 0;
+    memset( cartridge_controller, 0, sizeof( cartridge_controller ) );
+    cartridge_bank = 0;
+    cartridge_flags = 0;
+    cartridge_hblank = 34;
   }
 }

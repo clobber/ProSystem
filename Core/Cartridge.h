@@ -69,5 +69,6 @@ extern bool cartridge_pokey;
 extern byte cartridge_controller[2];
 extern byte cartridge_bank;
 extern uint cartridge_flags;
+extern uint cartridge_hblank;      // The hblank prior to DMA
 
 #endif
